@@ -1,6 +1,8 @@
 using MediaPark.Database;
-using MediaPark.Database.DatabaseHandler;
 using MediaPark.Repositories;
+using MediaPark.Services.ApiHelper;
+using MediaPark.Services.DatabaseHandler;
+using MediaPark.Services.FetchData;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server.Features;
@@ -56,6 +58,9 @@ namespace MediaPark
             });
             //DependencyInjection
             services.AddScoped<ICountryPublicHolidaysRepository, CountryPublicHolidaysRepository>();
+            services.AddScoped<IDatabaseHandler, DatabaseHandler>();
+            services.AddScoped<IApiHelper, ApiHelper>();
+            services.AddScoped<IFetchData, FetchData>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

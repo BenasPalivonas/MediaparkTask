@@ -1,5 +1,5 @@
 using MediaPark.Database;
-using MediaPark.Database.DatabaseHandler;
+using MediaPark.Services.DatabaseHandler;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -26,7 +26,8 @@ namespace MediaPark
                 if (dbContext.Database.IsSqlServer())
                 {
                     await dbContext.Database.MigrateAsync();
-                    await DatabaseHandler.ClearAndUpdateDatabaseWithFetchedData(dbContext);
+                    var databaseHandler = services.GetService<IDatabaseHandler>();
+                    await databaseHandler.ClearAndUpdateDatabaseWithFetchedData(dbContext);
                 }
             }
             catch (Exception e)

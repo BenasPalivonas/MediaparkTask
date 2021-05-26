@@ -1,21 +1,27 @@
 ﻿using MediaPark.Dtos;
 using MediaPark.Entities;
-using MediaPark.Services;
+using MediaPark.Services.ApiHelper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace MediaPark.Database.DatabaseHandlers
+namespace MediaPark.Services.FetchData
 {
-    public class InitialDataHandler
+    public class FetchData : IFetchData
     {
         private const string _supportedCountriesUrl = "json/v2.0/?action=getSupportedCountries";
+        private readonly IApiHelper _apiHelper;
 
-        public static async Task<List<Country>> FetchSupportedCountries()
+        public FetchData(IApiHelper apiHelper)
         {
-            using (HttpResponseMessage response = await ApiHelper.ApiClient.GetAsync(_supportedCountriesUrl))
+            _apiHelper = apiHelper;
+        }
+        public async Task<List<Country>> FetchSupportedCountries()
+        {
+            _apiHelper.InitializeClient();
+            using (HttpResponseMessage response = await _apiHelper.ApiClient.GetAsync(_supportedCountriesUrl))
             {
                 if (response.IsSuccessStatusCode)
                 {
