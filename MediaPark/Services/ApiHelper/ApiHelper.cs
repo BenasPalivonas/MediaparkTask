@@ -12,7 +12,8 @@ namespace MediaPark.Services.ApiHelper
     {
         public HttpClient ApiClient { get; set; }
 
-        public void InitializeClient() {
+        public void InitializeClient()
+        {
             ApiClient = new HttpClient
             {
                 BaseAddress = new Uri("https://kayaposoft.com/enrico/")

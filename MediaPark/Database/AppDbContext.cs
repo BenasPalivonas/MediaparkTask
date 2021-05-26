@@ -9,10 +9,11 @@ namespace MediaPark.Database
 {
     public class AppDbContext : DbContext
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) {
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+        {
             this.ChangeTracker.LazyLoadingEnabled = false;
         }
-        public DbSet<Country> Countries {get; set;}
+        public DbSet<Country> Countries { get; set; }
         public DbSet<FromDate> FromDates { get; set; }
         public DbSet<ToDate> ToDates { get; set; }
         public DbSet<HolidayType> HolidayTypes { get; set; }

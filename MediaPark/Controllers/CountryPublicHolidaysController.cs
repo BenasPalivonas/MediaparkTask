@@ -20,13 +20,18 @@ namespace MediaPark.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Country>>> GetAllCountries() {
+        public async Task<ActionResult<List<Country>>> GetAllCountries()
+        {
             try
             {
                 var countries = await _countryPublicHolidaysRepository.GetAllCountries();
+                if (countries is null) {
+                    return NotFound(404);
+                }
                 return Ok(countries);
             }
-            catch (Exception ex) {
+            catch
+            {
                 return StatusCode(500);
             }
         }

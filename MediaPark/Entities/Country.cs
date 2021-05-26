@@ -17,6 +17,6 @@ namespace MediaPark.Entities
         public string FullName { get; set; }
         public FromDate FromDate { get; set; }
         public ToDate ToDate { get; set; }
-     
+
     }
 }

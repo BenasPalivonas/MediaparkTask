@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MediaPark.Services.FetchData
 {
-   public interface IFetchData
+    public interface IFetchData
     {
         public Task<List<Country>> FetchSupportedCountries();
     }

@@ -27,7 +27,7 @@ namespace MediaPark.Services.DatabaseHandler
         {
             if (db.Countries.Any())
             {
-               await ClearDatabase(db);
+                await ClearDatabase(db);
             }
             var countries = await _fetchData.FetchSupportedCountries();
             await db.AddRangeAsync(countries);
@@ -35,16 +35,16 @@ namespace MediaPark.Services.DatabaseHandler
         }
         public async Task ClearDatabase(AppDbContext db)
         {
-          await  db.Database.ExecuteSqlRawAsync("EXEC sp_MSforeachtable @command1 = 'ALTER TABLE ? NOCHECK CONSTRAINT all'");
-            var tableNames =  db.Model.GetEntityTypes()
+            await db.Database.ExecuteSqlRawAsync("EXEC sp_MSforeachtable @command1 = 'ALTER TABLE ? NOCHECK CONSTRAINT all'");
+            var tableNames = db.Model.GetEntityTypes()
             .Select(t => t.GetTableName())
             .Distinct()
             .ToList();
             foreach (var table in tableNames)
             {
-              await  db.Database.ExecuteSqlRawAsync($"DELETE FROM {table}");
+                await db.Database.ExecuteSqlRawAsync($"DELETE FROM {table}");
             }
-           await db.Database.ExecuteSqlRawAsync("EXEC sp_MSforeachtable @command1 = 'ALTER TABLE ? CHECK CONSTRAINT all'");
+            await db.Database.ExecuteSqlRawAsync("EXEC sp_MSforeachtable @command1 = 'ALTER TABLE ? CHECK CONSTRAINT all'");
         }
     }
 }

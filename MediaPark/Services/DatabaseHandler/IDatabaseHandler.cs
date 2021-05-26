@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MediaPark.Services.DatabaseHandler
 {
-   public interface IDatabaseHandler
+    public interface IDatabaseHandler
     {
         public Task ClearAndUpdateDatabaseWithFetchedData(AppDbContext db);
         public Task ClearDatabase(AppDbContext db);

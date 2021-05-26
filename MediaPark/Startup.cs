@@ -83,11 +83,12 @@ namespace MediaPark
             });
             //add swagger
             app.UseSwagger();
-            app.UseSwaggerUI(options=> {
-                options.SwaggerEndpoint("/swagger/v1/swagger.json","API v1");
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1");
             });
 
-           
+
         }
     }
 }

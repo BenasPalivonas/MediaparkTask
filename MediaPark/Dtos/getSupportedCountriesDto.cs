@@ -8,11 +8,11 @@ namespace MediaPark.Dtos
 {
     public class GetSupportedCountriesDto
     {
-       public string CountryCode { get; set; }
-       public string [] Regions { get; set; }
-       public string[] HolidayTypes { get; set; }
-       public string FullName { get; set; }
-       public FromDate FromDate { get; set; }
-       public ToDate ToDate { get; set; }
+        public string CountryCode { get; set; }
+        public string[] Regions { get; set; }
+        public string[] HolidayTypes { get; set; }
+        public string FullName { get; set; }
+        public FromDate FromDate { get; set; }
+        public ToDate ToDate { get; set; }
     }
 }

@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace MediaPark.Repositories
 {
-   public interface ICountryPublicHolidaysRepository
+    public interface ICountryPublicHolidaysRepository
     {
-       public Task<List<SendSupportedCountriesDto>> GetAllCountries();
+        public Task<List<SendSupportedCountriesDto>> GetAllCountries();
     }
 }
