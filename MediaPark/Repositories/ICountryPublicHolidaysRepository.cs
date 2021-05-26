@@ -1,4 +1,5 @@
-﻿using MediaPark.Entities;
+﻿using MediaPark.Dtos;
+using MediaPark.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,6 @@ namespace MediaPark.Repositories
 {
    public interface ICountryPublicHolidaysRepository
     {
-        Task<IEnumerable<Country>> GetAllCountries();
+       public Task<List<SendSupportedCountriesDto>> GetAllCountries();
     }
 }

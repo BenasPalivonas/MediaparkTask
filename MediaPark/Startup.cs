@@ -1,4 +1,5 @@
 using MediaPark.Database;
+using MediaPark.Database.DatabaseHandler;
 using MediaPark.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -44,17 +45,17 @@ namespace MediaPark
                 .AllowCredentials();
             }));
 
-            services.AddSwaggerGen(options => {
+            services.AddSwaggerGen(options =>
+            {
                 options.SwaggerDoc("v1",
                     new Microsoft.OpenApi.Models.OpenApiInfo
                     {
-                        Title="Swagger API",
-                        Version="v1"
+                        Title = "Swagger API",
+                        Version = "v1"
                     });
             });
             //DependencyInjection
             services.AddScoped<ICountryPublicHolidaysRepository, CountryPublicHolidaysRepository>();
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
