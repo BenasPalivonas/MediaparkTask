@@ -1,6 +1,7 @@
 using MediaPark.Database;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -67,6 +69,8 @@ namespace MediaPark
             app.UseSwaggerUI(options=> {
                 options.SwaggerEndpoint("/swagger/v1/swagger.json","API v1");
             });
+
+           
         }
     }
 }

@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace MediaPark.Entities
 {
-    [Index(IsUnique = true)]
     public class Region
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

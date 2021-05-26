@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\MediaPark\\MediaPark\\MediaPark\\MediaPark.csproj": {}
+    "D:\\MediaParkTask\\MediaparkTask\\MediaPark\\MediaPark.csproj": {}
   },
   "projects": {
-    "D:\\MediaPark\\MediaPark\\MediaPark\\MediaPark.csproj": {
+    "D:\\MediaParkTask\\MediaparkTask\\MediaPark\\MediaPark.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\MediaPark\\MediaPark\\MediaPark\\MediaPark.csproj",
+        "projectUniqueName": "D:\\MediaParkTask\\MediaparkTask\\MediaPark\\MediaPark.csproj",
         "projectName": "MediaPark",
-        "projectPath": "D:\\MediaPark\\MediaPark\\MediaPark\\MediaPark.csproj",
+        "projectPath": "D:\\MediaParkTask\\MediaparkTask\\MediaPark\\MediaPark.csproj",
         "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-        "outputPath": "D:\\MediaPark\\MediaPark\\MediaPark\\obj\\",
+        "outputPath": "D:\\MediaParkTask\\MediaparkTask\\MediaPark\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",
