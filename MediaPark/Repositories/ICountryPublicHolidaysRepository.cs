@@ -10,5 +10,6 @@ namespace MediaPark.Repositories
     public interface ICountryPublicHolidaysRepository
     {
         public Task<List<SendSupportedCountriesDto>> GetAllCountries();
+        public Task<List>
     }
 }
