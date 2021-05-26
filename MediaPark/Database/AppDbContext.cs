@@ -10,6 +10,7 @@ namespace MediaPark.Database
     public class AppDbContext : DbContext
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) {
+            this.ChangeTracker.LazyLoadingEnabled = false;
         }
         public DbSet<Country> Countries {get; set;}
         public DbSet<FromDate> FromDates { get; set; }

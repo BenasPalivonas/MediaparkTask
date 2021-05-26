@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MediaPark.Dtos
 {
-    public class getSupportedCountriesDto
+    public class GetSupportedCountriesDto
     {
        public string CountryCode { get; set; }
        public string [] Regions { get; set; }

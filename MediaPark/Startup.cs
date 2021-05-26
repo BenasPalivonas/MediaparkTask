@@ -1,4 +1,5 @@
 using MediaPark.Database;
+using MediaPark.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server.Features;
@@ -36,6 +37,13 @@ namespace MediaPark
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
 
+            services.AddCors(options => options.AddPolicy("ApiCorsPolicy", builder =>
+            {
+                builder.AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials();
+            }));
+
             services.AddSwaggerGen(options => {
                 options.SwaggerDoc("v1",
                     new Microsoft.OpenApi.Models.OpenApiInfo
@@ -44,6 +52,9 @@ namespace MediaPark
                         Version="v1"
                     });
             });
+            //DependencyInjection
+            services.AddScoped<ICountryPublicHolidaysRepository, CountryPublicHolidaysRepository>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

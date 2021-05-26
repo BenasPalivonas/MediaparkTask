@@ -1,5 +1,6 @@
 ﻿using MediaPark.Database;
 using MediaPark.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,11 @@ namespace MediaPark.Repositories
         }
         public async Task<IEnumerable<Country>> GetAllCountries()
         {
-            var countries = await Task.Run(() => _appDbContext.Countries.AsEnumerable());
+            var countries = await Task.Run(() => _appDbContext.Countries
+            .Include(r => r.Regions)
+            .Include(r => r.HolidayTypes)
+            .Include(r=>r.FromDate)
+            .AsEnumerable()) ;
             return countries;
         }
     }

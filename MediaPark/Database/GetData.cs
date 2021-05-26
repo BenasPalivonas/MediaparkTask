@@ -44,7 +44,7 @@ namespace MediaPark.Database
             {
                 if (response.IsSuccessStatusCode)
                 {
-                    var countries = await response.Content.ReadAsAsync<List<getSupportedCountriesDto>>();
+                    var countries = await response.Content.ReadAsAsync<List<GetSupportedCountriesDto>>();
                     var countriesForDb = countries.Select(c => new Country
                     {
                         CountryCode = c.CountryCode,
