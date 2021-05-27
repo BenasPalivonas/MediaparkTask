@@ -1,4 +1,5 @@
 ﻿using MediaPark.Database;
+using MediaPark.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,8 @@ namespace MediaPark.Services.DatabaseHandler
 {
     public interface IDatabaseHandler
     {
-        public Task ClearAndUpdateDatabaseWithFetchedData(AppDbContext db);
-        public Task ClearDatabase(AppDbContext db);
+        public Task ClearAndUpdateDatabaseWithFetchedData();
+        public Task ClearDatabase();
+        public Task AddPublicHolidays(IEnumerable<HolidayType> holidayTypes);
     }
 }

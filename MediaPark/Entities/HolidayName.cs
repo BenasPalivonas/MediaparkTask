@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace MediaPark.Entities
 {
-    public class HolidayType
+    public class HolidayName
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public string Name { get; set; }
-        public List<Country_HolidayType> Country_HolidayTypes { get; set; }
+        public string Lang { get; set; }
+        public string Text { get; set; }
     }
 }

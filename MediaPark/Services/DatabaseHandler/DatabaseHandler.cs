@@ -17,34 +17,43 @@ namespace MediaPark.Services.DatabaseHandler
     public class DatabaseHandler : IDatabaseHandler
     {
         private readonly IFetchData _fetchData;
+        private readonly AppDbContext _appDbContext;
 
-        public DatabaseHandler(IFetchData fetchData)
+        public DatabaseHandler(IFetchData fetchData, AppDbContext appDbContext)
         {
             _fetchData = fetchData;
+            _appDbContext = appDbContext;
         }
 
-        public async Task ClearAndUpdateDatabaseWithFetchedData(AppDbContext db)
+        public async Task AddPublicHolidays(IEnumerable<HolidayType> holidayTypes)
         {
-            if (db.Countries.Any())
+            await _appDbContext.HolidayTypes.AddRangeAsync(holidayTypes);
+            await _appDbContext.SaveChangesAsync();
+        }
+
+        public async Task ClearAndUpdateDatabaseWithFetchedData()
+        {
+            if (_appDbContext.Countries.Any())
             {
-                await ClearDatabase(db);
+                await ClearDatabase();
             }
             var countries = await _fetchData.FetchSupportedCountries();
-            await db.AddRangeAsync(countries);
-            await db.SaveChangesAsync();
+            await AddPublicHolidays(await _fetchData.GetHolidayTypes(countries));
+            await _appDbContext.AddRangeAsync(_fetchData.GetCountryEntities(countries));
+            await _appDbContext.SaveChangesAsync();
         }
-        public async Task ClearDatabase(AppDbContext db)
+        public async Task ClearDatabase()
         {
-            await db.Database.ExecuteSqlRawAsync("EXEC sp_MSforeachtable @command1 = 'ALTER TABLE ? NOCHECK CONSTRAINT all'");
-            var tableNames = db.Model.GetEntityTypes()
+            await _appDbContext.Database.ExecuteSqlRawAsync("EXEC sp_MSforeachtable @command1 = 'ALTER TABLE ? NOCHECK CONSTRAINT all'");
+            var tableNames = _appDbContext.Model.GetEntityTypes()
             .Select(t => t.GetTableName())
             .Distinct()
             .ToList();
             foreach (var table in tableNames)
             {
-                await db.Database.ExecuteSqlRawAsync($"DELETE FROM {table}");
+                await _appDbContext.Database.ExecuteSqlRawAsync($"DELETE FROM {table}");
             }
-            await db.Database.ExecuteSqlRawAsync("EXEC sp_MSforeachtable @command1 = 'ALTER TABLE ? CHECK CONSTRAINT all'");
+            await _appDbContext.Database.ExecuteSqlRawAsync("EXEC sp_MSforeachtable @command1 = 'ALTER TABLE ? CHECK CONSTRAINT all'");
         }
     }
 }

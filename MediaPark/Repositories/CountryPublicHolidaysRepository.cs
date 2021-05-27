@@ -23,7 +23,7 @@ namespace MediaPark.Repositories
             {
                 CountryCode = c.CountryCode,
                 Regions = c.Regions,
-                HolidayTypes = c.HolidayTypes,
+                //HolidayTypes = c.HolidayTypes,
                 FullName = c.FullName,
                 FromDate = new SendDateDto
                 {
@@ -39,6 +39,11 @@ namespace MediaPark.Repositories
                 }
             }).ToList());
             return countries;
+        }
+
+        public Task<List<Holiday>> GetHolidaysForMonth()
+        {
+            throw new NotImplementedException();
         }
     }
 }
