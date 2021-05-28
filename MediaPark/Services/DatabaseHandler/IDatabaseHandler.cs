@@ -12,5 +12,6 @@ namespace MediaPark.Services.DatabaseHandler
         public Task ClearAndUpdateDatabaseWithFetchedData();
         public Task ClearDatabase();
         public Task AddPublicHolidays(IEnumerable<HolidayType> holidayTypes);
+        public Task AddHolidaysToDatabase(IEnumerable<Holiday> holidays);
     }
 }

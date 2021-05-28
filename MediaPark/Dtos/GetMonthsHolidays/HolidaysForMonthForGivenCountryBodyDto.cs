@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MediaPark.Dtos
 {
-    public class GetHolidaysForMonthForGivenCountryDto
+    public class HolidaysForMonthForGivenCountryBodyDto
     {
         public string CountryCode { get; set; }
         public int Month { get; set; }

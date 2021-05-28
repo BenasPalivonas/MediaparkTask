@@ -38,7 +38,7 @@ namespace MediaPark.Controllers
             }
         }
         [HttpPost]
-        public async Task<ActionResult<List<ReceiveHolidaysByYearAndMonthInAGivenCountryDto>>> GetAllHolidaysForMonth(GetHolidaysForMonthForGivenCountryDto getHolidays)
+        public async Task<ActionResult<List<HolidaysByYearAndMonthInAGivenCountryDto>>> GetAllHolidaysForMonth(HolidaysForMonthForGivenCountryBodyDto getHolidays)
             {
             try
             {

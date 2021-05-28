@@ -1,6 +1,7 @@
 ﻿using MediaPark.Database;
 using MediaPark.Dtos;
 using MediaPark.Entities;
+using MediaPark.Services.DatabaseHandler;
 using MediaPark.Services.FetchData;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -13,9 +14,8 @@ namespace MediaPark.Repositories
     public class CountryPublicHolidaysRepository : ICountryPublicHolidaysRepository
     {
         private readonly AppDbContext _appDbContext;
-        private readonly IFetchData _fetchData;
-
-        public CountryPublicHolidaysRepository(AppDbContext appDbContext,IFetchData fetchData)
+        private readonly IGetData _fetchData;
+        public CountryPublicHolidaysRepository(AppDbContext appDbContext,IGetData fetchData)
         {
             _appDbContext = appDbContext;
             _fetchData = fetchData;
@@ -44,9 +44,10 @@ namespace MediaPark.Repositories
             return countries;
         }
 
-        public async Task<List<ReceiveHolidaysByYearAndMonthInAGivenCountryDto>> GetHolidaysForMonthForGivenCountry(GetHolidaysForMonthForGivenCountryDto getHolidays)
+        public async Task<List<HolidaysByYearAndMonthInAGivenCountryDto>> GetHolidaysForMonthForGivenCountry(HolidaysForMonthForGivenCountryBodyDto getHolidays)
         {
-            return await _fetchData.GetHolidaysForMonth(getHolidays);
+            var data=await _fetchData.GetHolidaysForMonth(getHolidays);
+            return data;
         }
     }
 }

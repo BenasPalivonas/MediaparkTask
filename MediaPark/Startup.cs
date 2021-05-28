@@ -60,7 +60,7 @@ namespace MediaPark
             services.AddScoped<ICountryPublicHolidaysRepository, CountryPublicHolidaysRepository>();
             services.AddScoped<IDatabaseHandler, DatabaseHandler>();
             services.AddScoped<IApiHelper, ApiHelper>();
-            services.AddScoped<IFetchData, FetchData>();
+            services.AddScoped<IGetData, GetData>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

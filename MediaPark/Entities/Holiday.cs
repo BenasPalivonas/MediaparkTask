@@ -9,7 +9,7 @@ namespace MediaPark.Entities
     {
         public int Id { get; set; }
         public HolidayDate HolidayDate {get;set;}
-        public HolidayName HolidayName { get; set; }
+        public List<HolidayName> HolidayName { get; set; }
         public int HolidayTypeId { get; set; }
         public HolidayType HolidayType { get; set; }
         public string CountryCode { get; set; }

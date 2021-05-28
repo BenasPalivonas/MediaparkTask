@@ -16,10 +16,10 @@ namespace MediaPark.Services.DatabaseHandler
 {
     public class DatabaseHandler : IDatabaseHandler
     {
-        private readonly IFetchData _fetchData;
+        private readonly IGetData _fetchData;
         private readonly AppDbContext _appDbContext;
 
-        public DatabaseHandler(IFetchData fetchData, AppDbContext appDbContext)
+        public DatabaseHandler(IGetData fetchData, AppDbContext appDbContext)
         {
             _fetchData = fetchData;
             _appDbContext = appDbContext;
@@ -54,6 +54,10 @@ namespace MediaPark.Services.DatabaseHandler
                 await _appDbContext.Database.ExecuteSqlRawAsync($"DELETE FROM {table}");
             }
             await _appDbContext.Database.ExecuteSqlRawAsync("EXEC sp_MSforeachtable @command1 = 'ALTER TABLE ? CHECK CONSTRAINT all'");
+        }
+        public async Task AddHolidaysToDatabase(IEnumerable<Holiday> holidays) {
+            await _appDbContext.Holidays.AddRangeAsync(holidays);
+            await _appDbContext.SaveChangesAsync();
         }
     }
 }
