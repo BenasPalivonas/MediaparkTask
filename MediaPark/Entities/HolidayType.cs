@@ -12,5 +12,6 @@ namespace MediaPark.Entities
         public int Id { get; set; }
         public string Name { get; set; }
         public List<Country_HolidayType> Country_HolidayTypes { get; set; }
+        public List<Holiday> Holiday { get; set; }
     }
 }

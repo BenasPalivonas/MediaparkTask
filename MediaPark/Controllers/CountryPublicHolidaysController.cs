@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MediaPark.Dtos;
 
 namespace MediaPark.Controllers
 {
@@ -25,7 +26,8 @@ namespace MediaPark.Controllers
             try
             {
                 var countries = await _countryPublicHolidaysRepository.GetAllCountries();
-                if (countries is null) {
+                if (countries is null)
+                {
                     return NotFound(404);
                 }
                 return Ok(countries);
@@ -35,5 +37,17 @@ namespace MediaPark.Controllers
                 return StatusCode(500);
             }
         }
-    }
+        [HttpPost]
+        public async Task<ActionResult<List<ReceiveHolidaysByYearAndMonthInAGivenCountryDto>>> GetAllHolidaysForMonth(GetHolidaysForMonthForGivenCountryDto getHolidays)
+            {
+            try
+            {
+                var response = await _countryPublicHolidaysRepository.GetHolidaysForMonthForGivenCountry(getHolidays);
+                return Ok(response);
+            }
+            catch (Exception ex) {
+                throw new Exception(ex.Message);
+            }
+            }
+}
 }

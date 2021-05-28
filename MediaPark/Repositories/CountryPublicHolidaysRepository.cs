@@ -1,6 +1,7 @@
 ﻿using MediaPark.Database;
 using MediaPark.Dtos;
 using MediaPark.Entities;
+using MediaPark.Services.FetchData;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -12,18 +13,20 @@ namespace MediaPark.Repositories
     public class CountryPublicHolidaysRepository : ICountryPublicHolidaysRepository
     {
         private readonly AppDbContext _appDbContext;
+        private readonly IFetchData _fetchData;
 
-        public CountryPublicHolidaysRepository(AppDbContext appDbContext)
+        public CountryPublicHolidaysRepository(AppDbContext appDbContext,IFetchData fetchData)
         {
             _appDbContext = appDbContext;
+            _fetchData = fetchData;
         }
         public async Task<List<SendSupportedCountriesDto>> GetAllCountries()
         {
             var countries = await Task.Run(() => _appDbContext.Countries.Select(c => new SendSupportedCountriesDto
             {
                 CountryCode = c.CountryCode,
-                Regions = c.Regions,
-                //HolidayTypes = c.HolidayTypes,
+                Regions = c.Regions.Select(r=>r.Name).ToList(),
+                HolidayTypes = c.Country_HolidayTypes.Select(c=>c.HolidayType.Name).ToList(),
                 FullName = c.FullName,
                 FromDate = new SendDateDto
                 {
@@ -41,9 +44,9 @@ namespace MediaPark.Repositories
             return countries;
         }
 
-        public Task<List<Holiday>> GetHolidaysForMonth()
+        public async Task<List<ReceiveHolidaysByYearAndMonthInAGivenCountryDto>> GetHolidaysForMonthForGivenCountry(GetHolidaysForMonthForGivenCountryDto getHolidays)
         {
-            throw new NotImplementedException();
+            return await _fetchData.GetHolidaysForMonth(getHolidays);
         }
     }
 }

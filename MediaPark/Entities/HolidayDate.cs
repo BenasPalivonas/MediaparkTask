@@ -13,5 +13,7 @@ namespace MediaPark.Entities
         public int Day { get; set; }
         public int Month { get; set; }
         public int DayOfWeek { get; set; }
+        public int HolidayId { get; set; }
+        public Holiday Holidays { get; set; }
     }
 }

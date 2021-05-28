@@ -11,7 +11,7 @@ namespace MediaPark.Entities
     {
         [Key]
         public string CountryCode { get; set; }
-        public List<Region> Regions { get; set; }
+        public virtual List<Region> Regions { get; set; }
         public List<Country_HolidayType> Country_HolidayTypes { get; set; }
         [Required]
         public string FullName { get; set; }

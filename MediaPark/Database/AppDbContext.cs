@@ -53,7 +53,6 @@ namespace MediaPark.Database
                 .HasOne(c => c.HolidayType)
                 .WithMany(ch => ch.Country_HolidayTypes)
                 .HasForeignKey(c => c.HolidayTypeId);
-
         }
     }
 }

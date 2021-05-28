@@ -14,6 +14,7 @@ namespace MediaPark.Services.FetchData
     public class FetchData : IFetchData
     {
         private const string _supportedCountriesUrl = "json/v2.0/?action=getSupportedCountries";
+        private readonly string _getHolidaysForMonth = "json/v2.0?action=getHolidaysForMonth";
         private readonly IApiHelper _apiHelper;
         private readonly AppDbContext _dbContext;
 
@@ -67,5 +68,30 @@ namespace MediaPark.Services.FetchData
             }
             return await Task.Run(() => holidayTypes.Select(ht => new HolidayType { Name = ht })); 
         }
+
+        public async Task<List<ReceiveHolidaysByYearAndMonthInAGivenCountryDto>> GetHolidaysForMonth(GetHolidaysForMonthForGivenCountryDto getHolidays)
+        {
+            _apiHelper.InitializeClient();
+            var url = $"{_getHolidaysForMonth}&month={getHolidays.Month}&year={getHolidays.Year}&country={getHolidays.CountryCode}";
+           // var getCountry = _dbContext.Countries.Where(c => c.CountryCode.Equals(getHolidays.CountryCode)).SingleOrDefault();
+           // var testUrl = url;
+            using (HttpResponseMessage response = await _apiHelper.ApiClient.GetAsync(url))
+            {
+                if (response.IsSuccessStatusCode)
+                {
+                    var countries = await response.Content.ReadAsAsync<List<ReceiveHolidaysByYearAndMonthInAGivenCountryDto>>();
+                    foreach (var cnt in countries) {
+                        //Debug.WriteLine(cnt.Name[0].Text);
+                    }
+                    return countries;
+                }
+                else
+                {
+                    throw new Exception(response.ReasonPhrase);
+                }
+            }
+        }
+
+
     }
 }

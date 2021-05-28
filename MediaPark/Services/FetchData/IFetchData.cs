@@ -12,7 +12,7 @@ namespace MediaPark.Services.FetchData
     {
         public Task<List<GetSupportedCountriesDto>> FetchSupportedCountries();
         public List<Country> GetCountryEntities(List<GetSupportedCountriesDto> countries);
-
         public Task<IEnumerable<HolidayType>> GetHolidayTypes(List<GetSupportedCountriesDto> countries);
+        public Task<List<ReceiveHolidaysByYearAndMonthInAGivenCountryDto>> GetHolidaysForMonth(GetHolidaysForMonthForGivenCountryDto getHolidays);
     }
 }
