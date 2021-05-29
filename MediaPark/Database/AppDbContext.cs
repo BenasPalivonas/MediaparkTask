@@ -23,6 +23,7 @@ namespace MediaPark.Database
         public DbSet<HolidayDate> HolidayDates { get; set; }
         public DbSet<HolidayName> HolidayNames { get; set; }
         public DbSet<Day> Days { get; set; }
+        public DbSet<FullYearOfHolidays> FullYearOfHolidays { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Country>()
@@ -40,10 +41,10 @@ namespace MediaPark.Database
               .WithOne(a => a.Country)
               .HasForeignKey<ToDate>(a => a.CountryCode);
 
-            modelBuilder.Entity<Country>()
+           modelBuilder.Entity<Country>()
                 .HasMany(a => a.Holiday)
                 .WithOne(a => a.Country)
-                .HasForeignKey(a => a.CountryCode);
+                .HasForeignKey(a => a.CountryCode); 
 
             modelBuilder.Entity<Country_HolidayType>()
                 .HasOne(c => c.Country)
@@ -59,6 +60,11 @@ namespace MediaPark.Database
                 .HasMany(a => a.Regions)
                 .WithOne(a => a.Country)
                 .HasForeignKey(a => a.CountryCode);
+
+            modelBuilder.Entity<Country>()
+                .HasMany(a => a.FullYearOfHolidays)
+                .WithOne(fyh => fyh.Country)
+                .HasForeignKey(fyh => fyh.CountryCode);
         }
     }
 }

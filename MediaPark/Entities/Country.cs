@@ -18,5 +18,6 @@ namespace MediaPark.Entities
         public FromDate FromDate { get; set; }
         public ToDate ToDate { get; set; }
         public List<Holiday> Holiday { get; set; }
+        public List<FullYearOfHolidays> FullYearOfHolidays{ get; set; }
     }
 }

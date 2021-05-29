@@ -2,6 +2,7 @@
 using MediaPark.Dtos;
 using MediaPark.Dtos.GetMonthsHolidays;
 using MediaPark.Dtos.GetSpecificDayStatus;
+using MediaPark.Dtos.MaximumNumberOfFreeDays;
 using MediaPark.Entities;
 using MediaPark.Services.DatabaseHandler;
 using MediaPark.Services.GetData;
@@ -57,12 +58,12 @@ namespace MediaPark.Repositories
             }).ToList());
         }
 
-        public async Task<List<SendHolidaysInGivenCountryDto>> GetHolidaysForMonthForGivenCountry(HolidaysForGivenCountryBodyDto getHolidays)
+        public async Task<List<SendHolidaysInGivenCountryDto>> GetHolidaysForMonthForGivenCountry(HolidaysForGivenCountryBodyDto getHolidaysForMonth)
         {
-            var databaseHolidays = await _databaseHandler.GetHolidaysFromDb(getHolidays);
+            var databaseHolidays = await _databaseHandler.GetHolidaysFromDb(getHolidaysForMonth);
             if (databaseHolidays is null)
             {
-                var holidays = await _handleData.FetchHolidaysForMonth(getHolidays);
+                var holidays = await _handleData.FetchHolidaysForMonth(getHolidaysForMonth);
                 await _databaseHandler.AddHolidaysToDatabase(await HolidaysDtoToHolidaysIEnumerable(holidays));
                 return holidays;
             }
@@ -141,6 +142,12 @@ namespace MediaPark.Repositories
             await _databaseHandler.AddDayToDatabase(await _handleData.CreateDayEntity(getSpecificDayStatus, _freeDay));
             return new DayStatusAnswerDto { DayStatus = _freeDay };
         }
+        public async Task<List<SendHolidaysInGivenCountryDto>> GetHolidaysForYear(GetHolidaysForYear getHolidaysForYear) {
+            var holidays = await _handleData.FetchHolidaysForYear(getHolidaysForYear);
+            await _databaseHandler.AddHolidaysToDatabase(await HolidaysDtoToHolidaysIEnumerable(holidays));
+            return holidays;
+        }
+
 
     }
 }

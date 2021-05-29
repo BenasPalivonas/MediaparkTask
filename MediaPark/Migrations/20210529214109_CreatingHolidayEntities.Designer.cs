@@ -3,14 +3,16 @@ using MediaPark.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MediaPark.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210529214109_CreatingHolidayEntities")]
+    partial class CreatingHolidayEntities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -54,30 +56,6 @@ namespace MediaPark.Migrations
                     b.ToTable("Country_HolidayTypes");
                 });
 
-            modelBuilder.Entity("MediaPark.Entities.Day", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("DayOfTheMonth")
-                        .HasColumnType("int");
-
-                    b.Property<string>("DayStatus")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Month")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Year")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Days");
-                });
-
             modelBuilder.Entity("MediaPark.Entities.FromDate", b =>
                 {
                     b.Property<int>("Id")
@@ -104,101 +82,6 @@ namespace MediaPark.Migrations
                         .HasFilter("[CountryCode] IS NOT NULL");
 
                     b.ToTable("FromDates");
-                });
-
-            modelBuilder.Entity("MediaPark.Entities.FullYearOfHolidays", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("CountryCode")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("Year")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CountryCode");
-
-                    b.ToTable("FullYearOfHolidays");
-                });
-
-            modelBuilder.Entity("MediaPark.Entities.Holiday", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("CountryCode")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("HolidayTypeId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CountryCode");
-
-                    b.HasIndex("HolidayTypeId");
-
-                    b.ToTable("Holidays");
-                });
-
-            modelBuilder.Entity("MediaPark.Entities.HolidayDate", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("Day")
-                        .HasColumnType("int");
-
-                    b.Property<int>("DayOfWeek")
-                        .HasColumnType("int");
-
-                    b.Property<int>("HolidayId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Month")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Year")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("HolidayId")
-                        .IsUnique();
-
-                    b.ToTable("HolidayDates");
-                });
-
-            modelBuilder.Entity("MediaPark.Entities.HolidayName", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("HolidayId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Lang")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Text")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("HolidayId");
-
-                    b.ToTable("HolidayNames");
                 });
 
             modelBuilder.Entity("MediaPark.Entities.HolidayType", b =>
@@ -290,54 +173,6 @@ namespace MediaPark.Migrations
                     b.Navigation("Country");
                 });
 
-            modelBuilder.Entity("MediaPark.Entities.FullYearOfHolidays", b =>
-                {
-                    b.HasOne("MediaPark.Entities.Country", "Country")
-                        .WithMany("FullYearOfHolidays")
-                        .HasForeignKey("CountryCode");
-
-                    b.Navigation("Country");
-                });
-
-            modelBuilder.Entity("MediaPark.Entities.Holiday", b =>
-                {
-                    b.HasOne("MediaPark.Entities.Country", "Country")
-                        .WithMany("Holiday")
-                        .HasForeignKey("CountryCode");
-
-                    b.HasOne("MediaPark.Entities.HolidayType", "HolidayType")
-                        .WithMany("Holiday")
-                        .HasForeignKey("HolidayTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Country");
-
-                    b.Navigation("HolidayType");
-                });
-
-            modelBuilder.Entity("MediaPark.Entities.HolidayDate", b =>
-                {
-                    b.HasOne("MediaPark.Entities.Holiday", "Holidays")
-                        .WithOne("HolidayDate")
-                        .HasForeignKey("MediaPark.Entities.HolidayDate", "HolidayId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Holidays");
-                });
-
-            modelBuilder.Entity("MediaPark.Entities.HolidayName", b =>
-                {
-                    b.HasOne("MediaPark.Entities.Holiday", "Holiday")
-                        .WithMany("HolidayName")
-                        .HasForeignKey("HolidayId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Holiday");
-                });
-
             modelBuilder.Entity("MediaPark.Entities.Region", b =>
                 {
                     b.HasOne("MediaPark.Entities.Country", "Country")
@@ -362,27 +197,14 @@ namespace MediaPark.Migrations
 
                     b.Navigation("FromDate");
 
-                    b.Navigation("FullYearOfHolidays");
-
-                    b.Navigation("Holiday");
-
                     b.Navigation("Regions");
 
                     b.Navigation("ToDate");
                 });
 
-            modelBuilder.Entity("MediaPark.Entities.Holiday", b =>
-                {
-                    b.Navigation("HolidayDate");
-
-                    b.Navigation("HolidayName");
-                });
-
             modelBuilder.Entity("MediaPark.Entities.HolidayType", b =>
                 {
                     b.Navigation("Country_HolidayTypes");
-
-                    b.Navigation("Holiday");
                 });
 #pragma warning restore 612, 618
         }

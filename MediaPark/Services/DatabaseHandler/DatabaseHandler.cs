@@ -72,9 +72,7 @@ namespace MediaPark.Services.DatabaseHandler
                 .Where(h => h.CountryCode == getHolidays.CountryCode)
                 .Where(h => h.HolidayDate.Year == getHolidays.Year && h.HolidayDate.Month == getHolidays.Month)?.ToList();
             });
-            Debug.WriteLine(holidays.Count());
                 if (!holidays.Any()) {
-                Debug.WriteLine("null");
                 return null;
                 }
             return holidays;

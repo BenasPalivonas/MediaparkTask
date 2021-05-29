@@ -7431,11 +7431,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\MediaParkTask\\MediaparkTask\\MediaPark\\MediaPark.csproj",
+      "projectUniqueName": "D:\\MediaPark\\MediaPark\\MediaPark\\MediaPark.csproj",
       "projectName": "MediaPark",
-      "projectPath": "D:\\MediaParkTask\\MediaparkTask\\MediaPark\\MediaPark.csproj",
+      "projectPath": "D:\\MediaPark\\MediaPark\\MediaPark\\MediaPark.csproj",
       "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-      "outputPath": "D:\\MediaParkTask\\MediaparkTask\\MediaPark\\obj\\",
+      "outputPath": "D:\\MediaPark\\MediaPark\\MediaPark\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",
