@@ -1,5 +1,6 @@
 ﻿using MediaPark.Database;
 using MediaPark.Dtos;
+using MediaPark.Dtos.GetSpecificDayStatus;
 using MediaPark.Entities;
 using MediaPark.Services;
 using MediaPark.Services.FetchData;
@@ -16,12 +17,12 @@ namespace MediaPark.Services.DatabaseHandler
 {
     public class DatabaseHandler : IDatabaseHandler
     {
-        private readonly IGetData _fetchData;
+        private readonly IGetData _getData;
         private readonly AppDbContext _appDbContext;
 
-        public DatabaseHandler(IGetData fetchData, AppDbContext appDbContext)
+        public DatabaseHandler(IGetData getData, AppDbContext appDbContext)
         {
-            _fetchData = fetchData;
+            _getData = getData;
             _appDbContext = appDbContext;
         }
 
@@ -37,9 +38,9 @@ namespace MediaPark.Services.DatabaseHandler
             {
                 await ClearDatabase();
             }
-            var countries = await _fetchData.FetchSupportedCountries();
-            await AddPublicHolidays(await _fetchData.GetHolidayTypes(countries));
-            await _appDbContext.AddRangeAsync(_fetchData.GetCountryEntities(countries));
+            var countries = await _getData.FetchSupportedCountries();
+            await AddPublicHolidays(await _getData.GetHolidayTypes(countries));
+            await _appDbContext.AddRangeAsync(_getData.GetCountryEntities(countries));
             await _appDbContext.SaveChangesAsync();
         }
         public async Task ClearDatabase()
@@ -58,6 +59,25 @@ namespace MediaPark.Services.DatabaseHandler
         public async Task AddHolidaysToDatabase(IEnumerable<Holiday> holidays) {
             await _appDbContext.Holidays.AddRangeAsync(holidays);
             await _appDbContext.SaveChangesAsync();
+        }
+        public async Task AddDayToDatabase(Day day)
+        {
+            await _appDbContext.Days.AddAsync(day);
+            await _appDbContext.SaveChangesAsync();
+        }
+        public async Task<DayStatusAnswerDto> ReturnDayStatusFromDb(SpecificDayStatusDto specificDay) {
+            string dayStatus = await Task.Run(() =>
+            {
+               return _appDbContext.Days.Where(d=>d.Year==specificDay.Year
+               &&d.Month==specificDay.Month
+               &&d.DayOfTheMonth==specificDay.DayOfTheMonth).SingleOrDefault()?.DayStatus;
+                
+            });
+            if (dayStatus is not null)
+            {
+                return new DayStatusAnswerDto { DayStatus = dayStatus };
+            }
+            return null;
         }
     }
 }

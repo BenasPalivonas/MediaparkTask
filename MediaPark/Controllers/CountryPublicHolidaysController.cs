@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MediaPark.Dtos;
+using MediaPark.Dtos.GetSpecificDayStatus;
 
 namespace MediaPark.Controllers
 {
@@ -26,7 +27,7 @@ namespace MediaPark.Controllers
             try
             {
                 var countries = await _countryPublicHolidaysRepository.GetAllCountries();
-                if (countries is null)
+                if (!countries.Any())
                 {
                     return NotFound(404);
                 }
@@ -38,16 +39,28 @@ namespace MediaPark.Controllers
             }
         }
         [HttpPost]
-        public async Task<ActionResult<List<HolidaysByYearAndMonthInAGivenCountryDto>>> GetAllHolidaysForMonth(HolidaysForMonthForGivenCountryBodyDto getHolidays)
-            {
+        public async Task<ActionResult<List<SendHolidaysInGivenCountryDto>>> GetAllHolidaysForMonth(HolidaysForGivenCountryBodyDto getHolidays)
+        {
             try
             {
                 var response = await _countryPublicHolidaysRepository.GetHolidaysForMonthForGivenCountry(getHolidays);
                 return Ok(response);
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 throw new Exception(ex.Message);
             }
+        }
+        [HttpPost]
+        public async Task<ActionResult<DayStatusAnswerDto>> SpecificDayStatus(SpecificDayStatusDto dayStatusDto) {
+            try
+            {
+                var response = await _countryPublicHolidaysRepository.GetSpecificDayStatus(dayStatusDto);
+                return Ok(response);
             }
-}
+            catch (Exception ex) {
+                throw new Exception(ex.Message);
+            }            
+        }
+    }
 }

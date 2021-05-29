@@ -12,7 +12,7 @@ namespace MediaPark.Dtos
         public List<string> Regions { get; set; }
         public List<string> HolidayTypes { get; set; }
         public string FullName { get; set; }
-        public SendDateDto FromDate { get; set; }
-        public SendDateDto ToDate { get; set; }
+        public DateDto FromDate { get; set; }
+        public DateDto ToDate { get; set; }
     }
 }

@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace MediaPark.Dtos
 {
-   public class HolidaysByYearAndMonthInAGivenCountryDto
+   public class SendHolidaysInGivenCountryDto
     {
-        public GetDateDto Date { get; set; }
+        public DateWithDayOfWeekDto Date { get; set; }
         public List<HolidayNameDto> Name { get; set; }
         public string HolidayType { get; set; }
         public string CountryCode { get; set; }

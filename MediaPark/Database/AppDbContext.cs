@@ -22,6 +22,7 @@ namespace MediaPark.Database
         public DbSet<Holiday> Holidays { get; set; }
         public DbSet<HolidayDate> HolidayDates { get; set; }
         public DbSet<HolidayName> HolidayNames { get; set; }
+        public DbSet<Day> Days { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Country>()

@@ -1,4 +1,5 @@
 ﻿using MediaPark.Dtos;
+using MediaPark.Dtos.GetSpecificDayStatus;
 using MediaPark.Entities;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ namespace MediaPark.Repositories
     public interface ICountryPublicHolidaysRepository
     {
         public Task<List<SendSupportedCountriesDto>> GetAllCountries();
-        public Task<List<HolidaysByYearAndMonthInAGivenCountryDto>> GetHolidaysForMonthForGivenCountry(HolidaysForMonthForGivenCountryBodyDto getHolidays);
+        public Task<List<SendHolidaysInGivenCountryDto>> GetHolidaysForMonthForGivenCountry(HolidaysForGivenCountryBodyDto getHolidays);
+        public Task<DayStatusAnswerDto> GetSpecificDayStatus(SpecificDayStatusDto getSpecificDayStatus);
     }
 }
