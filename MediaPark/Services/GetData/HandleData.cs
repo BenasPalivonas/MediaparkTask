@@ -12,9 +12,9 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MediaPark.Dtos.GetSpecificDayStatus;
 
-namespace MediaPark.Services.FetchData
+namespace MediaPark.Services.GetData
 {
-    public class GetData : IGetData
+    public class HandleData : IHandleData
     {
         private const string _supportedCountriesUrl = "json/v2.0/?action=getSupportedCountries";
         private readonly string _getHolidaysForMonthUrl = "json/v2.0?action=getHolidaysForMonth";
@@ -23,7 +23,7 @@ namespace MediaPark.Services.FetchData
         private readonly IApiHelper _apiHelper;
         private readonly AppDbContext _dbContext;
 
-        public GetData(IApiHelper apiHelper, AppDbContext dbContext)
+        public HandleData(IApiHelper apiHelper, AppDbContext dbContext)
         {
             _apiHelper = apiHelper;
             _dbContext = dbContext;
@@ -75,13 +75,8 @@ namespace MediaPark.Services.FetchData
             return await Task.Run(() => holidayTypes.Select(ht => new HolidayType { Name = ht }));
         }
 
-        public async Task<List<SendHolidaysInGivenCountryDto>> GetHolidaysForMonth(HolidaysForGivenCountryBodyDto getHolidays)
+        public async Task<List<SendHolidaysInGivenCountryDto>> FetchHolidaysForMonth(HolidaysForGivenCountryBodyDto getHolidays)
         {
-            var holidaysFromDb = await GetHolidaysForMonthInDatabase(getHolidays);
-            if (holidaysFromDb is not null)
-            {
-                return holidaysFromDb;
-            }
             _apiHelper.InitializeClient();
             string url = ConfigureGetHolidaysForMonthUrl(getHolidays);
             using (HttpResponseMessage response = await _apiHelper.ApiClient.GetAsync(url))
@@ -90,7 +85,6 @@ namespace MediaPark.Services.FetchData
                 {
                     var holidays = await response.Content.ReadAsAsync<List<SendHolidaysInGivenCountryDto>>();
                     holidays.ForEach(c => c.CountryCode = getHolidays.CountryCode);
-                    await AddHolidaysToDb(holidays);
                     return holidays;
                 }
                 else
@@ -110,64 +104,7 @@ namespace MediaPark.Services.FetchData
             }
             return url;
         }
-        public async Task<List<SendHolidaysInGivenCountryDto>> GetHolidaysForMonthInDatabase(HolidaysForGivenCountryBodyDto getHolidays)
-        {
-            var holidays = _dbContext.Holidays.Include(h => h.HolidayDate).Include(h => h.HolidayType).Include(h => h.HolidayName)
-                .Where(h => h.CountryCode == getHolidays.CountryCode)
-                .Where(h => h.HolidayDate.Year == getHolidays.Year && h.HolidayDate.Month == getHolidays.Month).ToList();
-            if (holidays.Any())
-            {
-                return await Task.Run(() =>
-                {
-                    return holidays.Select(h => new SendHolidaysInGivenCountryDto
-                    {
-                        Date = new DateWithDayOfWeekDto
-                        {
-                            Day = h.HolidayDate.Day,
-                            Month = h.HolidayDate.Month,
-                            Year = h.HolidayDate.Year,
-                            DayOfWeek = h.HolidayDate.DayOfWeek
-                        },
-                        Name = h.HolidayName.Select(hn => new HolidayNameDto
-                        {
-                            Lang = hn.Lang,
-                            Text = hn.Text,
-                        }).ToList(),
-                        HolidayType = h.HolidayType.Name,
-                        CountryCode = h.CountryCode
-                    }).ToList();
-                });
-
-            }
-
-            return null;
-        }
-        public async Task AddHolidaysToDb(List<SendHolidaysInGivenCountryDto> getHolidays)
-        {
-            IEnumerable<Holiday> holidays = await Task.Run(() =>
-            {
-                return getHolidays.Select(h => new Holiday
-                {
-                    HolidayDate = new HolidayDate
-                    {
-                        Day = h.Date.Day,
-                        Month = h.Date.Month,
-                        Year = h.Date.Year,
-                        DayOfWeek = h.Date.DayOfWeek,
-                    },
-                    HolidayName = h.Name.Select(hn => new HolidayName
-                    {
-                        Lang = hn.Lang,
-                        Text = hn.Text
-                    }).ToList(),
-                    HolidayType = _dbContext.HolidayTypes.SingleOrDefault(ht => ht.Name.Equals(h.HolidayType)),
-                    Country = _dbContext.Countries.Find(h.CountryCode)
-                });
-            });
-            await _dbContext.Holidays.AddRangeAsync(holidays);
-            await _dbContext.SaveChangesAsync();
-        }
-        public async Task<IsPublicHolidayDto> GetIsPublicHoliday(SpecificDayStatusDto getDayStatus)
+        public async Task<IsPublicHolidayDto> FetchIsPublicHoliday(SpecificDayStatusDto getDayStatus)
         {
             _apiHelper.InitializeClient();
             var url = $"{_IsPublicHolidayUrl}&date={getDayStatus.DayOfTheMonth}-{getDayStatus.Month}-{getDayStatus.Year}&country={getDayStatus.CountryCode}";
@@ -185,7 +122,7 @@ namespace MediaPark.Services.FetchData
                 }
             }
         }
-        public async Task<IsWorkDayDto> GetIsWorkDay(SpecificDayStatusDto getDayStatus)
+        public async Task<IsWorkDayDto> FetchIsWorkDay(SpecificDayStatusDto getDayStatus)
         {
             _apiHelper.InitializeClient();
             var url = $"{_IsWorkDayUrl}&date={getDayStatus.DayOfTheMonth}-{getDayStatus.Month}-{getDayStatus.Year}&country={getDayStatus.CountryCode}";
@@ -202,6 +139,19 @@ namespace MediaPark.Services.FetchData
                     throw new Exception(response.ReasonPhrase);
                 }
             }
+        }
+        public async Task<Day> CreateDayEntity(SpecificDayStatusDto getSpecificDayStatusDto, string DayStatus)
+        {
+            return await Task.Run(() =>
+            {
+                return new Day
+                {
+                    DayOfTheMonth = getSpecificDayStatusDto.DayOfTheMonth,
+                    Month = getSpecificDayStatusDto.Month,
+                    Year = getSpecificDayStatusDto.Year,
+                    DayStatus = DayStatus
+                };
+            });
         }
 
     }

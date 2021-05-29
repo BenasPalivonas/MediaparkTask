@@ -27,7 +27,7 @@ namespace MediaPark
                 {
                     await dbContext.Database.MigrateAsync();
                     var databaseHandler = services.GetService<IDatabaseHandler>();
-                    await databaseHandler.ClearAndUpdateDatabaseWithFetchedData();
+                    await databaseHandler.ClearAndUpdateDatabaseWithCountries();
                 }
             }
             catch (Exception e)

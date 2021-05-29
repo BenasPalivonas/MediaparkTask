@@ -7,18 +7,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MediaPark.Services.FetchData
+namespace MediaPark.Services.GetData
 {
-    public interface IGetData
+    public interface IHandleData
     {
         public Task<List<GetSupportedCountriesDto>> FetchSupportedCountries();
         public List<Country> GetCountryEntities(List<GetSupportedCountriesDto> countries);
         public Task<IEnumerable<HolidayType>> GetHolidayTypes(List<GetSupportedCountriesDto> countries);
-        public Task<List<SendHolidaysInGivenCountryDto>> GetHolidaysForMonth(HolidaysForGivenCountryBodyDto getHolidays);
+        public Task<List<SendHolidaysInGivenCountryDto>> FetchHolidaysForMonth(HolidaysForGivenCountryBodyDto getHolidays);
         public string ConfigureGetHolidaysForMonthUrl(HolidaysForGivenCountryBodyDto getHolidays);
-        public Task<List<SendHolidaysInGivenCountryDto>> GetHolidaysForMonthInDatabase(HolidaysForGivenCountryBodyDto getHolidays);
-        public Task AddHolidaysToDb(List<SendHolidaysInGivenCountryDto> getHolidays);
-        public Task<IsPublicHolidayDto> GetIsPublicHoliday(SpecificDayStatusDto getDayStatus);
-        public Task<IsWorkDayDto> GetIsWorkDay(SpecificDayStatusDto getDayStatus);
+        public Task<IsPublicHolidayDto> FetchIsPublicHoliday(SpecificDayStatusDto getDayStatus);
+        public Task<IsWorkDayDto> FetchIsWorkDay(SpecificDayStatusDto getDayStatus);
+        public Task<Day> CreateDayEntity(SpecificDayStatusDto getSpecificDayStatusDto, string DayStatus);
+
     }
 }

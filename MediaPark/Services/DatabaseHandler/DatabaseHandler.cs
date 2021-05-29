@@ -3,7 +3,7 @@ using MediaPark.Dtos;
 using MediaPark.Dtos.GetSpecificDayStatus;
 using MediaPark.Entities;
 using MediaPark.Services;
-using MediaPark.Services.FetchData;
+using MediaPark.Services.GetData;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -17,10 +17,10 @@ namespace MediaPark.Services.DatabaseHandler
 {
     public class DatabaseHandler : IDatabaseHandler
     {
-        private readonly IGetData _getData;
+        private readonly IHandleData _getData;
         private readonly AppDbContext _appDbContext;
 
-        public DatabaseHandler(IGetData getData, AppDbContext appDbContext)
+        public DatabaseHandler(IHandleData getData, AppDbContext appDbContext)
         {
             _getData = getData;
             _appDbContext = appDbContext;
@@ -32,7 +32,7 @@ namespace MediaPark.Services.DatabaseHandler
             await _appDbContext.SaveChangesAsync();
         }
 
-        public async Task ClearAndUpdateDatabaseWithFetchedData()
+        public async Task ClearAndUpdateDatabaseWithCountries()
         {
             if (_appDbContext.Countries.Any())
             {
@@ -64,6 +64,20 @@ namespace MediaPark.Services.DatabaseHandler
         {
             await _appDbContext.Days.AddAsync(day);
             await _appDbContext.SaveChangesAsync();
+        }
+        public async Task<List<Holiday>> GetHolidaysFromDb(HolidaysForGivenCountryBodyDto getHolidays) {
+            var holidays = await Task.Run(() =>
+            {
+                return _appDbContext.Holidays.Include(h => h.HolidayDate).Include(h => h.HolidayType).Include(h => h.HolidayName)
+                .Where(h => h.CountryCode == getHolidays.CountryCode)
+                .Where(h => h.HolidayDate.Year == getHolidays.Year && h.HolidayDate.Month == getHolidays.Month)?.ToList();
+            });
+            Debug.WriteLine(holidays.Count());
+                if (!holidays.Any()) {
+                Debug.WriteLine("null");
+                return null;
+                }
+            return holidays;
         }
         public async Task<DayStatusAnswerDto> ReturnDayStatusFromDb(SpecificDayStatusDto specificDay) {
             string dayStatus = await Task.Run(() =>

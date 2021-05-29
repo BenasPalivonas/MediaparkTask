@@ -1,9 +1,10 @@
 ﻿using MediaPark.Database;
 using MediaPark.Dtos;
+using MediaPark.Dtos.GetMonthsHolidays;
 using MediaPark.Dtos.GetSpecificDayStatus;
 using MediaPark.Entities;
 using MediaPark.Services.DatabaseHandler;
-using MediaPark.Services.FetchData;
+using MediaPark.Services.GetData;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -15,21 +16,27 @@ namespace MediaPark.Repositories
     public class CountryPublicHolidaysRepository : ICountryPublicHolidaysRepository
     {
         private readonly AppDbContext _appDbContext;
-        private readonly IGetData _getData;
+        private readonly IHandleData _handleData;
         private readonly IDatabaseHandler _databaseHandler;
         private readonly string _publicHoliday = "Public holiday";
         private readonly string _workDay = "Work day";
         private readonly string _freeDay = "Free day";
 
-        public CountryPublicHolidaysRepository(AppDbContext appDbContext, IGetData getData, IDatabaseHandler databaseHandler)
+        public CountryPublicHolidaysRepository(AppDbContext appDbContext, IHandleData handleData, IDatabaseHandler databaseHandler)
         {
             _appDbContext = appDbContext;
-            _getData = getData;
+            _handleData = handleData;
             _databaseHandler = databaseHandler;
         }
         public async Task<List<SendSupportedCountriesDto>> GetAllCountries()
         {
-            var countries = await Task.Run(() => _appDbContext.Countries.Select(c => new SendSupportedCountriesDto
+            List<SendSupportedCountriesDto> countries = await ConvertCountriesForController();
+            return countries;
+        }
+
+        private async Task<List<SendSupportedCountriesDto>> ConvertCountriesForController()
+        {
+            return await Task.Run(() => _appDbContext.Countries.Select(c => new SendSupportedCountriesDto
             {
                 CountryCode = c.CountryCode,
                 Regions = c.Regions.Select(r => r.Name).ToList(),
@@ -48,50 +55,92 @@ namespace MediaPark.Repositories
                     Year = c.ToDate.Year,
                 }
             }).ToList());
-            return countries;
         }
 
         public async Task<List<SendHolidaysInGivenCountryDto>> GetHolidaysForMonthForGivenCountry(HolidaysForGivenCountryBodyDto getHolidays)
         {
-            var data = await _getData.GetHolidaysForMonth(getHolidays);
-            return data;
+            var databaseHolidays = await _databaseHandler.GetHolidaysFromDb(getHolidays);
+            if (databaseHolidays is null)
+            {
+                var holidays = await _handleData.FetchHolidaysForMonth(getHolidays);
+                await _databaseHandler.AddHolidaysToDatabase(await HolidaysDtoToHolidaysIEnumerable(holidays));
+                return holidays;
+            }
+            return await FormatHolidaysForController(databaseHolidays);
         }
+
+        private static async Task<List<SendHolidaysInGivenCountryDto>> FormatHolidaysForController(List<Holiday> databaseHolidays)
+        {
+            return await Task.Run(() =>
+            {
+                return databaseHolidays.Select(h => new SendHolidaysInGivenCountryDto
+                {
+                    Date = new DateWithDayOfWeekDto
+                    {
+                        Day = h.HolidayDate.Day,
+                        Month = h.HolidayDate.Month,
+                        Year = h.HolidayDate.Year,
+                        DayOfWeek = h.HolidayDate.DayOfWeek
+                    },
+                    Name = h.HolidayName.Select(hn => new HolidayNameDto
+                    {
+                        Lang = hn.Lang,
+                        Text = hn.Text,
+                    }).ToList(),
+                    HolidayType = h.HolidayType.Name,
+                    CountryCode = h.CountryCode
+                }).ToList();
+            });
+        }
+
+        private async Task<IEnumerable<Holiday>> HolidaysDtoToHolidaysIEnumerable(List<SendHolidaysInGivenCountryDto> holidays)
+        {
+            return await Task.Run(() =>
+            {
+                return holidays.Select(h => new Holiday
+                {
+                    HolidayDate = new HolidayDate
+                    {
+                        Day = h.Date.Day,
+                        Month = h.Date.Month,
+                        Year = h.Date.Year,
+                        DayOfWeek = h.Date.DayOfWeek,
+                    },
+                    HolidayName = h.Name.Select(hn => new HolidayName
+                    {
+                        Lang = hn.Lang,
+                        Text = hn.Text
+                    }).ToList(),
+                    HolidayType = _appDbContext.HolidayTypes.SingleOrDefault(ht => ht.Name.Equals(h.HolidayType)),
+                    Country = _appDbContext.Countries.Find(h.CountryCode)
+                });
+            });
+        }
+
         public async Task<DayStatusAnswerDto> GetSpecificDayStatus(SpecificDayStatusDto getSpecificDayStatus)
         {
             var dbAnswer = await _databaseHandler.ReturnDayStatusFromDb(getSpecificDayStatus);
-            if(dbAnswer is not null)
+            if (dbAnswer is not null)
             {
                 return dbAnswer;
             }
-            var isPublicHoliday = await _getData.GetIsPublicHoliday(getSpecificDayStatus);
+            var isPublicHoliday = await _handleData.FetchIsPublicHoliday(getSpecificDayStatus);
             if (isPublicHoliday.IsPublicHoliday == true)
             {
-                await _databaseHandler.AddDayToDatabase(await CreateDayEntity(getSpecificDayStatus, _publicHoliday));
+                await _databaseHandler.AddDayToDatabase(await _handleData.CreateDayEntity(getSpecificDayStatus, _publicHoliday));
                 return new DayStatusAnswerDto { DayStatus = _publicHoliday };
             }
-            var isWorkDay = await _getData.GetIsWorkDay(getSpecificDayStatus);
+            var isWorkDay = await _handleData.FetchIsWorkDay(getSpecificDayStatus);
             if (isWorkDay.IsWorkDay == true)
             {
-                await _databaseHandler.AddDayToDatabase(await CreateDayEntity(getSpecificDayStatus, _workDay));
+                await _databaseHandler.AddDayToDatabase(await _handleData.CreateDayEntity(getSpecificDayStatus, _workDay));
 
                 return new DayStatusAnswerDto { DayStatus = _workDay };
 
             }
-            await _databaseHandler.AddDayToDatabase(await CreateDayEntity(getSpecificDayStatus, _freeDay));
+            await _databaseHandler.AddDayToDatabase(await _handleData.CreateDayEntity(getSpecificDayStatus, _freeDay));
             return new DayStatusAnswerDto { DayStatus = _freeDay };
         }
-        public async Task<Day> CreateDayEntity(SpecificDayStatusDto getSpecificDayStatusDto, string DayStatus)
-        {
-            return await Task.Run(() =>
-            {
-                return new Day
-                {
-                    DayOfTheMonth = getSpecificDayStatusDto.DayOfTheMonth,
-                    Month = getSpecificDayStatusDto.Month,
-                    Year = getSpecificDayStatusDto.Year,
-                    DayStatus = DayStatus
-                };
-            });
-        }
+
     }
 }
