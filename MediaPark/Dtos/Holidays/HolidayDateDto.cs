@@ -6,13 +6,15 @@ using System.Threading.Tasks;
 
 namespace MediaPark.Dtos
 {
-    public class HolidaysForGivenCountryBodyDto
+    public class HolidayDateDto
     {
-        public string CountryCode { get; set; }
-        [Range(1,12)]
+        [Range(1,7)]
+        public int Day { get; set; }
+        [Range(1,31)]
         public int Month { get; set; }
-        [Range(1,int.MaxValue)]
+        [Range(1, int.MaxValue)]
         public int Year { get; set; }
-
+        [Range(1,7)]
+        public int DayOfWeek { get; set; }
     }
 }

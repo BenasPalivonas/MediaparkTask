@@ -1,14 +1,16 @@
 ﻿using MediaPark.Database;
 using MediaPark.Dtos;
-using MediaPark.Dtos.GetMonthsHolidays;
+using MediaPark.Dtos.Holidays;
 using MediaPark.Dtos.GetSpecificDayStatus;
 using MediaPark.Dtos.MaximumNumberOfFreeDays;
 using MediaPark.Entities;
 using MediaPark.Services.DatabaseHandler;
 using MediaPark.Services.GetData;
 using Microsoft.EntityFrameworkCore;
+using MoreLinq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -58,7 +60,7 @@ namespace MediaPark.Repositories
             }).ToList());
         }
 
-        public async Task<List<SendHolidaysInGivenCountryDto>> GetHolidaysForMonthForGivenCountry(HolidaysForGivenCountryBodyDto getHolidaysForMonth)
+        public async Task<List<SendHolidayDto>> GetHolidaysForMonthForGivenCountry(HolidaysForGivenCountryMonthBodyDto getHolidaysForMonth)
         {
             var databaseHolidays = await _databaseHandler.GetHolidaysFromDb(getHolidaysForMonth);
             if (databaseHolidays is null)
@@ -70,19 +72,14 @@ namespace MediaPark.Repositories
             return await FormatHolidaysForController(databaseHolidays);
         }
 
-        private static async Task<List<SendHolidaysInGivenCountryDto>> FormatHolidaysForController(List<Holiday> databaseHolidays)
+        private static async Task<List<SendHolidayDto>> FormatHolidaysForController(List<Holiday> databaseHolidays)
         {
             return await Task.Run(() =>
             {
-                return databaseHolidays.Select(h => new SendHolidaysInGivenCountryDto
+                return databaseHolidays.Select(h => new SendHolidayDto
                 {
-                    Date = new DateWithDayOfWeekDto
-                    {
-                        Day = h.HolidayDate.Day,
-                        Month = h.HolidayDate.Month,
-                        Year = h.HolidayDate.Year,
-                        DayOfWeek = h.HolidayDate.DayOfWeek
-                    },
+                    Date = h.Date,
+                    DayOfTheWeek = h.DayOfTheWeek,
                     Name = h.HolidayName.Select(hn => new HolidayNameDto
                     {
                         Lang = hn.Lang,
@@ -94,19 +91,13 @@ namespace MediaPark.Repositories
             });
         }
 
-        private async Task<IEnumerable<Holiday>> HolidaysDtoToHolidaysIEnumerable(List<SendHolidaysInGivenCountryDto> holidays)
+        private async Task<IEnumerable<Holiday>> HolidaysDtoToHolidaysIEnumerable(List<SendHolidayDto> holidays)
         {
             return await Task.Run(() =>
             {
                 return holidays.Select(h => new Holiday
                 {
-                    HolidayDate = new HolidayDate
-                    {
-                        Day = h.Date.Day,
-                        Month = h.Date.Month,
-                        Year = h.Date.Year,
-                        DayOfWeek = h.Date.DayOfWeek,
-                    },
+                    Date = h.Date,
                     HolidayName = h.Name.Select(hn => new HolidayName
                     {
                         Lang = hn.Lang,
@@ -142,10 +133,30 @@ namespace MediaPark.Repositories
             await _databaseHandler.AddDayToDatabase(await _handleData.CreateDayEntity(getSpecificDayStatus, _freeDay));
             return new DayStatusAnswerDto { DayStatus = _freeDay };
         }
-        public async Task<List<SendHolidaysInGivenCountryDto>> GetHolidaysForYear(GetHolidaysForYear getHolidaysForYear) {
-            var holidays = await _handleData.FetchHolidaysForYear(getHolidaysForYear);
-            await _databaseHandler.AddHolidaysToDatabase(await HolidaysDtoToHolidaysIEnumerable(holidays));
-            return holidays;
+        public async Task<List<SendHolidayDto>> GetHolidaysForYear(GetHolidaysForYearBodyDto getHolidaysForYear)
+        {
+            var holidaysForController = await _handleData.FetchHolidaysForYear(getHolidaysForYear);
+            var holidays = (await HolidaysDtoToHolidaysIEnumerable(holidaysForController)).ToList();
+            var dbHolidays = _appDbContext.Holidays.ToList();
+            var distinctHolidaysForDb = new List<Holiday>();
+            bool contains = false;
+            foreach (var holiday in holidays)
+            {
+                foreach (var dbHoliday in dbHolidays)
+                {
+                    if (holiday.Date.Equals(dbHoliday.Date))
+                    {
+                        contains = true;
+                        break;
+                    }
+                }
+                if (!contains)
+                {
+                    distinctHolidaysForDb.Add(holiday);
+                }
+            }
+            await _databaseHandler.AddHolidaysToDatabase(distinctHolidaysForDb);
+            return holidaysForController;
         }
 
 

@@ -1,6 +1,7 @@
 ﻿using MediaPark.Database;
 using MediaPark.Dtos;
 using MediaPark.Dtos.GetSpecificDayStatus;
+using MediaPark.Dtos.Holidays;
 using MediaPark.Dtos.MaximumNumberOfFreeDays;
 using MediaPark.Entities;
 using System;
@@ -15,11 +16,11 @@ namespace MediaPark.Services.GetData
         public Task<List<GetSupportedCountriesDto>> FetchSupportedCountries();
         public List<Country> GetCountryEntities(List<GetSupportedCountriesDto> countries);
         public Task<IEnumerable<HolidayType>> GetHolidayTypes(List<GetSupportedCountriesDto> countries);
-        public Task<List<SendHolidaysInGivenCountryDto>> FetchHolidaysForMonth(HolidaysForGivenCountryBodyDto getHolidays);
+        public Task<List<SendHolidayDto>> FetchHolidaysForMonth(HolidaysForGivenCountryMonthBodyDto getHolidays);
         public Task<IsPublicHolidayDto> FetchIsPublicHoliday(SpecificDayStatusDto getDayStatus);
         public Task<IsWorkDayDto> FetchIsWorkDay(SpecificDayStatusDto getDayStatus);
         public Task<Day> CreateDayEntity(SpecificDayStatusDto getSpecificDayStatusDto, string DayStatus);
-        public Task<List<SendHolidaysInGivenCountryDto>> FetchHolidaysForYear(GetHolidaysForYear getMaximumNumberOfFreeDaysInYear);
+        public Task<List<SendHolidayDto>> FetchHolidaysForYear(GetHolidaysForYearBodyDto getMaximumNumberOfFreeDaysInYear);
 
     }
 }

@@ -14,7 +14,7 @@ namespace MediaPark.Services.DatabaseHandler
         public Task ClearAndUpdateDatabaseWithCountries();
         public Task ClearDatabase();
         public Task AddPublicHolidays(IEnumerable<HolidayType> holidayTypes);
-        public Task<List<Holiday>> GetHolidaysFromDb(HolidaysForGivenCountryBodyDto getHolidays);
+        public Task<List<Holiday>> GetHolidaysFromDb(HolidaysForGivenCountryMonthBodyDto getHolidays);
         public Task AddHolidaysToDatabase(IEnumerable<Holiday> holidays);
         public Task AddDayToDatabase(Day day);
         public Task<DayStatusAnswerDto> ReturnDayStatusFromDb(SpecificDayStatusDto specificDay);

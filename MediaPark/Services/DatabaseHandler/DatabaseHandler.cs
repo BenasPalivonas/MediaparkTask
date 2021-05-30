@@ -65,12 +65,12 @@ namespace MediaPark.Services.DatabaseHandler
             await _appDbContext.Days.AddAsync(day);
             await _appDbContext.SaveChangesAsync();
         }
-        public async Task<List<Holiday>> GetHolidaysFromDb(HolidaysForGivenCountryBodyDto getHolidays) {
+        public async Task<List<Holiday>> GetHolidaysFromDb(HolidaysForGivenCountryMonthBodyDto getHolidays) {
             var holidays = await Task.Run(() =>
             {
-                return _appDbContext.Holidays.Include(h => h.HolidayDate).Include(h => h.HolidayType).Include(h => h.HolidayName)
+                return _appDbContext.Holidays.Include(h => h.HolidayType).Include(h => h.HolidayName)
                 .Where(h => h.CountryCode == getHolidays.CountryCode)
-                .Where(h => h.HolidayDate.Year == getHolidays.Year && h.HolidayDate.Month == getHolidays.Month)?.ToList();
+                .Where(h => h.Date.Contains ($"{getHolidays.Month}-{getHolidays.Year}"))?.ToList();
             });
                 if (!holidays.Any()) {
                 return null;

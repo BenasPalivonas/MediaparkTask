@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "XfrjpBOiHThpxIY5umdtKmPjsBCjvxspCm6cxIzzh8ZJJblE0vieyLjmS0+efAPXKGioJx5LGwg4kNu3FzAa2g==",
+  "dgSpecHash": "Lr7RmPaGvf0vmmu0bJ/Ql4Sm1ta4mdZ69uxGNMFonBq3R2Ato4c0EVcDIj9u3UmntOhknHDLytkWFNJ4UYeD2w==",
   "success": true,
   "projectFilePath": "D:\\MediaPark\\MediaPark\\MediaPark\\MediaPark.csproj",
   "expectedPackageFiles": [
@@ -38,6 +38,7 @@
     "C:\\Users\\User\\.nuget\\packages\\microsoft.win32.primitives\\4.3.0\\microsoft.win32.primitives.4.3.0.nupkg.sha512",
     "C:\\Users\\User\\.nuget\\packages\\microsoft.win32.registry\\4.7.0\\microsoft.win32.registry.4.7.0.nupkg.sha512",
     "C:\\Users\\User\\.nuget\\packages\\microsoft.win32.systemevents\\4.7.0\\microsoft.win32.systemevents.4.7.0.nupkg.sha512",
+    "C:\\Users\\User\\.nuget\\packages\\morelinq\\3.3.2\\morelinq.3.3.2.nupkg.sha512",
     "C:\\Users\\User\\.nuget\\packages\\netstandard.library\\1.6.1\\netstandard.library.1.6.1.nupkg.sha512",
     "C:\\Users\\User\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512",
     "C:\\Users\\User\\.nuget\\packages\\newtonsoft.json.bson\\1.0.1\\newtonsoft.json.bson.1.0.1.nupkg.sha512",

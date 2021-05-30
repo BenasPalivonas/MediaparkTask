@@ -46,7 +46,6 @@ namespace MediaPark
                 .AllowAnyHeader()
                 .AllowCredentials();
             }));
-
             services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1",
@@ -81,6 +80,7 @@ namespace MediaPark
             {
                 endpoints.MapControllers();
             });
+            app.UseDeveloperExceptionPage();
             //add swagger
             app.UseSwagger();
             app.UseSwaggerUI(options =>

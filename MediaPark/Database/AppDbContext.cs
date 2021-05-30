@@ -20,7 +20,6 @@ namespace MediaPark.Database
         public DbSet<Country_HolidayType> Country_HolidayTypes { get; set; }
         public DbSet<Region> Regions { get; set; }
         public DbSet<Holiday> Holidays { get; set; }
-        public DbSet<HolidayDate> HolidayDates { get; set; }
         public DbSet<HolidayName> HolidayNames { get; set; }
         public DbSet<Day> Days { get; set; }
         public DbSet<FullYearOfHolidays> FullYearOfHolidays { get; set; }

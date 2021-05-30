@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MediaPark.Dtos.MaximumNumberOfFreeDays
 {
-    public class GetHolidaysForYear
+    public class GetHolidaysForYearBodyDto
     {
         public string CountryCode { get; set; }
         [Range(0,int.MaxValue)]

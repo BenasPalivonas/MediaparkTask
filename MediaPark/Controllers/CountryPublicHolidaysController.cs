@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using MediaPark.Dtos;
 using MediaPark.Dtos.GetSpecificDayStatus;
 using MediaPark.Dtos.MaximumNumberOfFreeDays;
+using MediaPark.Dtos.Holidays;
 
 namespace MediaPark.Controllers
 {
@@ -40,7 +41,7 @@ namespace MediaPark.Controllers
             }
         }
         [HttpPost]
-        public async Task<ActionResult<List<SendHolidaysInGivenCountryDto>>> GetAllHolidaysForMonth(HolidaysForGivenCountryBodyDto getHolidays)
+        public async Task<ActionResult<List<ReadHolidaysInGivenCountry>>> GetAllHolidaysForMonth(HolidaysForGivenCountryMonthBodyDto getHolidays)
         {
             try
             {
@@ -63,7 +64,8 @@ namespace MediaPark.Controllers
                 throw new Exception(ex.Message);
             }            
         }
-        public async  Task<ActionResult<List<SendHolidaysInGivenCountryDto>>> GetMaximumNumberOfFreeDaysInYear(GetHolidaysForYear getHolidaysForYear) {
+        [HttpPost]
+        public async  Task<ActionResult<List<SendHolidayDto>>> GetMaximumNumberOfFreeDaysInYear(GetHolidaysForYearBodyDto getHolidaysForYear) {
             try {
                 var holidays = await _countryPublicHolidaysRepository.GetHolidaysForYear(getHolidaysForYear);
                 return holidays;

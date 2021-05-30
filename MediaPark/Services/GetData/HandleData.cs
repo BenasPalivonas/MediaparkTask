@@ -1,6 +1,6 @@
 ﻿using MediaPark.Database;
 using MediaPark.Dtos;
-using MediaPark.Dtos.GetMonthsHolidays;
+using MediaPark.Dtos.Holidays;
 using MediaPark.Entities;
 using MediaPark.Services.ApiHelper;
 using System;
@@ -77,7 +77,7 @@ namespace MediaPark.Services.GetData
             return await Task.Run(() => holidayTypes.Select(ht => new HolidayType { Name = ht }));
         }
 
-        public async Task<List<SendHolidaysInGivenCountryDto>> FetchHolidaysForMonth(HolidaysForGivenCountryBodyDto getHolidays)
+        public async Task<List<SendHolidayDto>> FetchHolidaysForMonth(HolidaysForGivenCountryMonthBodyDto getHolidays)
         {
             _apiHelper.InitializeClient();
             string url = ConfigureGetHolidaysForMonthUrl(getHolidays);
@@ -85,9 +85,9 @@ namespace MediaPark.Services.GetData
             {
                 if (response.IsSuccessStatusCode)
                 {
-                    var holidays = await response.Content.ReadAsAsync<List<SendHolidaysInGivenCountryDto>>();
+                    var holidays = await response.Content.ReadAsAsync<List<ReadHolidaysInGivenCountry>>();
                     holidays.ForEach(c => c.CountryCode = getHolidays.CountryCode);
-                    return holidays;
+                    return FormatHolidaysForSending(holidays);
                 }
                 else
                 {
@@ -96,7 +96,7 @@ namespace MediaPark.Services.GetData
             }
         }
 
-        private string ConfigureGetHolidaysForMonthUrl(HolidaysForGivenCountryBodyDto getHolidays)
+        private string ConfigureGetHolidaysForMonthUrl(HolidaysForGivenCountryMonthBodyDto getHolidays)
         {
             var url = $"{_getHolidaysForMonthUrl}&month={getHolidays.Month}&year={getHolidays.Year}&country={getHolidays.CountryCode}";
             var getCountry = _dbContext.Countries.Include(c => c.Regions).Where(c => c.CountryCode.Equals(getHolidays.CountryCode)).SingleOrDefault();
@@ -155,7 +155,7 @@ namespace MediaPark.Services.GetData
                 };
             });
         }
-        public async Task<List<SendHolidaysInGivenCountryDto>> FetchHolidaysForYear(GetHolidaysForYear getMaximumNumberOfFreeDaysInYear)
+        public async Task<List<SendHolidayDto>> FetchHolidaysForYear(GetHolidaysForYearBodyDto getMaximumNumberOfFreeDaysInYear)
         {
             _apiHelper.InitializeClient();
             var url = ConfigureGetHolidaysForYearUrl(getMaximumNumberOfFreeDaysInYear);
@@ -163,9 +163,9 @@ namespace MediaPark.Services.GetData
             {
                 if (response.IsSuccessStatusCode)
                 {
-                    var holidays = await response.Content.ReadAsAsync<List<SendHolidaysInGivenCountryDto>>();
+                    var holidays = await response.Content.ReadAsAsync<List<ReadHolidaysInGivenCountry>>();
                     holidays.ForEach(c => c.CountryCode = getMaximumNumberOfFreeDaysInYear.CountryCode);
-                    return holidays;
+                    return FormatHolidaysForSending( holidays);
                 }
                 else
                 {
@@ -173,7 +173,24 @@ namespace MediaPark.Services.GetData
                 }
             }
         }
-        private string ConfigureGetHolidaysForYearUrl(GetHolidaysForYear getMaximumNumberOfFreeDaysInYear)
+
+        private static List<SendHolidayDto> FormatHolidaysForSending(List<ReadHolidaysInGivenCountry> holidays)
+        {
+            return holidays.Select(h => new SendHolidayDto
+            {
+                Date = $"{h.Date.Day}-{h.Date.Month}-{h.Date.Year}",
+                DayOfTheWeek = h.Date.DayOfWeek,
+                Name = h.Name.Select(hn => new HolidayNameDto
+                {
+                    Lang = hn.Lang,
+                    Text = hn.Text,
+                }).ToList(),
+                HolidayType = h.HolidayType,
+                CountryCode = h.CountryCode
+            }).ToList();
+        }
+
+        private string ConfigureGetHolidaysForYearUrl(GetHolidaysForYearBodyDto getMaximumNumberOfFreeDaysInYear)
         {
             string url = $"{_getHolidaysForYearUrl}&year={getMaximumNumberOfFreeDaysInYear.Year}&country={getMaximumNumberOfFreeDaysInYear.CountryCode}";
             var getCountry = _dbContext.Countries.Include(c => c.Regions).Where(c => c.CountryCode.Equals(getMaximumNumberOfFreeDaysInYear.CountryCode)).SingleOrDefault();

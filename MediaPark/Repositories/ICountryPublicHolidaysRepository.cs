@@ -1,5 +1,6 @@
 ﻿using MediaPark.Dtos;
 using MediaPark.Dtos.GetSpecificDayStatus;
+using MediaPark.Dtos.Holidays;
 using MediaPark.Dtos.MaximumNumberOfFreeDays;
 using MediaPark.Entities;
 using System;
@@ -12,8 +13,8 @@ namespace MediaPark.Repositories
     public interface ICountryPublicHolidaysRepository
     {
         public Task<List<SendSupportedCountriesDto>> GetAllCountries();
-        public Task<List<SendHolidaysInGivenCountryDto>> GetHolidaysForMonthForGivenCountry(HolidaysForGivenCountryBodyDto getHolidays);
+        public Task<List<SendHolidayDto>> GetHolidaysForMonthForGivenCountry(HolidaysForGivenCountryMonthBodyDto getHolidaysForMonth);
         public Task<DayStatusAnswerDto> GetSpecificDayStatus(SpecificDayStatusDto getSpecificDayStatus);
-        public Task<List<SendHolidaysInGivenCountryDto>> GetHolidaysForYear(GetHolidaysForYear getHolidaysForYear);
+        public Task<List<SendHolidayDto>> GetHolidaysForYear(GetHolidaysForYearBodyDto getHolidaysForYear);
     }
 }

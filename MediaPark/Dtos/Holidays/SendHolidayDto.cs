@@ -1,15 +1,16 @@
-﻿using MediaPark.Dtos.GetMonthsHolidays;
-using MediaPark.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MediaPark.Dtos
+namespace MediaPark.Dtos.Holidays
 {
-   public class SendHolidaysInGivenCountryDto
+    public class SendHolidayDto
     {
-        public DateWithDayOfWeekDto Date { get; set; }
+        public string Date { get; set; }
+        [Range(1,7)]
+        public int DayOfTheWeek { get; set; }
         public List<HolidayNameDto> Name { get; set; }
         public string HolidayType { get; set; }
         public string CountryCode { get; set; }
