@@ -13,7 +13,7 @@ namespace MediaPark.Repositories
     public interface ICountryPublicHolidaysRepository
     {
         public Task<List<SendSupportedCountriesDto>> GetAllCountries();
-        public Task<List<SendHolidayDto>> GetHolidaysForMonthForGivenCountry(HolidaysForGivenCountryMonthBodyDto getHolidaysForMonth);
+        public Task<List<SendHolidayDto>> GetHolidaysForMonthForGivenCountry(GetHolidaysForMonthBodyDto getHolidaysForMonth);
         public Task<DayStatusAnswerDto> GetSpecificDayStatus(SpecificDayStatusDto getSpecificDayStatus);
         public Task<List<SendHolidayDto>> GetHolidaysForYear(GetHolidaysForYearBodyDto getHolidaysForYear);
     }

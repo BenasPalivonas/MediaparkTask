@@ -1,5 +1,5 @@
 ﻿using MediaPark.Database;
-using MediaPark.Dtos;
+using MediaPark.Dtos.MaximumNumberOfFreeDays;
 using MediaPark.Dtos.GetSpecificDayStatus;
 using MediaPark.Entities;
 using MediaPark.Services;
@@ -11,7 +11,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-
+using MediaPark.Dtos.Holidays;
 
 namespace MediaPark.Services.DatabaseHandler
 {
@@ -65,12 +65,12 @@ namespace MediaPark.Services.DatabaseHandler
             await _appDbContext.Days.AddAsync(day);
             await _appDbContext.SaveChangesAsync();
         }
-        public async Task<List<Holiday>> GetHolidaysFromDb(HolidaysForGivenCountryMonthBodyDto getHolidays) {
+        public async Task<List<Holiday>> GetMonthsHolidaysFromDb(GetHolidaysForMonthBodyDto getHolidays) {
             var holidays = await Task.Run(() =>
             {
                 return _appDbContext.Holidays.Include(h => h.HolidayType).Include(h => h.HolidayName)
                 .Where(h => h.CountryCode == getHolidays.CountryCode)
-                .Where(h => h.Date.Contains ($"{getHolidays.Month}-{getHolidays.Year}"))?.ToList();
+                .Where(h => h.Date.EndsWith ($"{getHolidays.Month}-{getHolidays.Year}"))?.ToList();
             });
                 if (!holidays.Any()) {
                 return null;
@@ -88,6 +88,36 @@ namespace MediaPark.Services.DatabaseHandler
             if (dayStatus is not null)
             {
                 return new DayStatusAnswerDto { DayStatus = dayStatus };
+            }
+            return null;
+        }
+        public async Task AddFullYearsOfHolidaysToCountry(GetHolidaysForYearBodyDto getHolidays) {
+            var fullYearOfHolidays = new FullYearOfHolidays
+            {
+                Year = getHolidays.Year,
+                Country = _appDbContext.Countries.Find(getHolidays.CountryCode),
+                CountryCode = getHolidays.CountryCode
+            };
+            await _appDbContext.FullYearOfHolidays.AddAsync(fullYearOfHolidays);
+            await _appDbContext.SaveChangesAsync();
+
+        }
+        public async Task<List<Holiday>> GetYearsHolidaysFromDb(GetHolidaysForYearBodyDto getHolidays)
+        {
+            var fullYearsOfHolidays = _appDbContext.FullYearOfHolidays.Where(FYOH => FYOH.CountryCode == getHolidays.CountryCode && FYOH.Year == getHolidays.Year)?.SingleOrDefault();
+            if (fullYearsOfHolidays is not null)
+            {
+                var holidays = await Task.Run(() =>
+                {
+                    return _appDbContext.Holidays.Include(h => h.HolidayType).Include(h => h.HolidayName)
+                    .Where(h => h.CountryCode == getHolidays.CountryCode)
+                    .Where(h => h.Date.EndsWith($"-{getHolidays.Year}"))?.ToList();
+                });
+                if (!holidays.Any())
+                {
+                    return null;
+                }
+                return holidays;
             }
             return null;
         }

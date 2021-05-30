@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaPark", "MediaPark\MediaPark.csproj", "{61DEC786-6CF8-4279-A730-7DDD338969CA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaPark", "MediaPark\MediaPark.csproj", "{64D6A143-6F47-46CB-8A80-1F20C05EBDC2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{61DEC786-6CF8-4279-A730-7DDD338969CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{61DEC786-6CF8-4279-A730-7DDD338969CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{61DEC786-6CF8-4279-A730-7DDD338969CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{61DEC786-6CF8-4279-A730-7DDD338969CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64D6A143-6F47-46CB-8A80-1F20C05EBDC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64D6A143-6F47-46CB-8A80-1F20C05EBDC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64D6A143-6F47-46CB-8A80-1F20C05EBDC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64D6A143-6F47-46CB-8A80-1F20C05EBDC2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {24D8DB1C-20F2-400D-8945-1545EDBE5C8D}
+		SolutionGuid = {5CC1B011-A114-4760-9A51-DBF2B5A1501D}
 	EndGlobalSection
 EndGlobal

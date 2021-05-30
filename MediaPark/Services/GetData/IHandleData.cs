@@ -16,11 +16,11 @@ namespace MediaPark.Services.GetData
         public Task<List<GetSupportedCountriesDto>> FetchSupportedCountries();
         public List<Country> GetCountryEntities(List<GetSupportedCountriesDto> countries);
         public Task<IEnumerable<HolidayType>> GetHolidayTypes(List<GetSupportedCountriesDto> countries);
-        public Task<List<SendHolidayDto>> FetchHolidaysForMonth(HolidaysForGivenCountryMonthBodyDto getHolidays);
+        public Task<List<SendHolidayDto>> FetchHolidaysForMonth(GetHolidaysForMonthBodyDto getHolidays);
         public Task<IsPublicHolidayDto> FetchIsPublicHoliday(SpecificDayStatusDto getDayStatus);
         public Task<IsWorkDayDto> FetchIsWorkDay(SpecificDayStatusDto getDayStatus);
         public Task<Day> CreateDayEntity(SpecificDayStatusDto getSpecificDayStatusDto, string DayStatus);
-        public Task<List<SendHolidayDto>> FetchHolidaysForYear(GetHolidaysForYearBodyDto getMaximumNumberOfFreeDaysInYear);
+        public Task<List<SendHolidayDto>> FetchHolidaysForYear(Dtos.MaximumNumberOfFreeDays.GetHolidaysForYearBodyDto getMaximumNumberOfFreeDaysInYear);
 
     }
 }

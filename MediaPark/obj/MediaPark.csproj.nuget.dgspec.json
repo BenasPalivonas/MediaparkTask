@@ -71,10 +71,6 @@
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.1.4, )"
-            },
-            "morelinq": {
-              "target": "Package",
-              "version": "[3.3.2, )"
             }
           },
           "imports": [

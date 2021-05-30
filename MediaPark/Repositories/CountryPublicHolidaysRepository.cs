@@ -7,7 +7,6 @@ using MediaPark.Entities;
 using MediaPark.Services.DatabaseHandler;
 using MediaPark.Services.GetData;
 using Microsoft.EntityFrameworkCore;
-using MoreLinq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -60,16 +59,16 @@ namespace MediaPark.Repositories
             }).ToList());
         }
 
-        public async Task<List<SendHolidayDto>> GetHolidaysForMonthForGivenCountry(HolidaysForGivenCountryMonthBodyDto getHolidaysForMonth)
+        public async Task<List<SendHolidayDto>> GetHolidaysForMonthForGivenCountry(GetHolidaysForMonthBodyDto getHolidaysForMonth)
         {
-            var databaseHolidays = await _databaseHandler.GetHolidaysFromDb(getHolidaysForMonth);
-            if (databaseHolidays is null)
+            var databaseHolidays = await _databaseHandler.GetMonthsHolidaysFromDb(getHolidaysForMonth);
+            if (databaseHolidays is not null)
             {
-                var holidays = await _handleData.FetchHolidaysForMonth(getHolidaysForMonth);
-                await _databaseHandler.AddHolidaysToDatabase(await HolidaysDtoToHolidaysIEnumerable(holidays));
-                return holidays;
+                return await FormatHolidaysForController(databaseHolidays);
             }
-            return await FormatHolidaysForController(databaseHolidays);
+            var holidays = await _handleData.FetchHolidaysForMonth(getHolidaysForMonth);
+            await _databaseHandler.AddHolidaysToDatabase(await HolidaysDtoToHolidaysIEnumerable(holidays));
+            return holidays;
         }
 
         private static async Task<List<SendHolidayDto>> FormatHolidaysForController(List<Holiday> databaseHolidays)
@@ -104,6 +103,7 @@ namespace MediaPark.Repositories
                         Text = hn.Text
                     }).ToList(),
                     HolidayType = _appDbContext.HolidayTypes.SingleOrDefault(ht => ht.Name.Equals(h.HolidayType)),
+                    CountryCode = h.CountryCode,
                     Country = _appDbContext.Countries.Find(h.CountryCode)
                 });
             });
@@ -135,16 +135,29 @@ namespace MediaPark.Repositories
         }
         public async Task<List<SendHolidayDto>> GetHolidaysForYear(GetHolidaysForYearBodyDto getHolidaysForYear)
         {
+            var dbAnswer = await _databaseHandler.GetYearsHolidaysFromDb(getHolidaysForYear);
+            if (dbAnswer is not null)
+            {
+                return await FormatHolidaysForController(dbAnswer);
+            }
             var holidaysForController = await _handleData.FetchHolidaysForYear(getHolidaysForYear);
             var holidays = (await HolidaysDtoToHolidaysIEnumerable(holidaysForController)).ToList();
             var dbHolidays = _appDbContext.Holidays.ToList();
+            var distinctHolidaysForDb = GetDistinctHolidays(holidays, dbHolidays);
+            await _databaseHandler.AddHolidaysToDatabase(distinctHolidaysForDb);
+            await _databaseHandler.AddFullYearsOfHolidaysToCountry(getHolidaysForYear);
+            return holidaysForController;
+        }
+
+        private static List<Holiday> GetDistinctHolidays(List<Holiday> holidays, List<Holiday> dbHolidays)
+        {
             var distinctHolidaysForDb = new List<Holiday>();
             bool contains = false;
             foreach (var holiday in holidays)
             {
                 foreach (var dbHoliday in dbHolidays)
                 {
-                    if (holiday.Date.Equals(dbHoliday.Date))
+                    if (holiday.Date.Equals(dbHoliday.Date) && holiday.CountryCode.Equals(dbHoliday.CountryCode))
                     {
                         contains = true;
                         break;
@@ -155,10 +168,11 @@ namespace MediaPark.Repositories
                     distinctHolidaysForDb.Add(holiday);
                 }
             }
-            await _databaseHandler.AddHolidaysToDatabase(distinctHolidaysForDb);
-            return holidaysForController;
+            return distinctHolidaysForDb;
         }
-
+        public async Task<SendMaximumNumberOfFreeDaysDto> getMaximumNumberOfFreeDaysInHolidayList(List<Holiday> holidays) {
+        
+        }
 
     }
 }

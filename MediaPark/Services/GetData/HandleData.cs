@@ -77,7 +77,7 @@ namespace MediaPark.Services.GetData
             return await Task.Run(() => holidayTypes.Select(ht => new HolidayType { Name = ht }));
         }
 
-        public async Task<List<SendHolidayDto>> FetchHolidaysForMonth(HolidaysForGivenCountryMonthBodyDto getHolidays)
+        public async Task<List<SendHolidayDto>> FetchHolidaysForMonth(GetHolidaysForMonthBodyDto getHolidays)
         {
             _apiHelper.InitializeClient();
             string url = ConfigureGetHolidaysForMonthUrl(getHolidays);
@@ -96,7 +96,7 @@ namespace MediaPark.Services.GetData
             }
         }
 
-        private string ConfigureGetHolidaysForMonthUrl(HolidaysForGivenCountryMonthBodyDto getHolidays)
+        private string ConfigureGetHolidaysForMonthUrl(GetHolidaysForMonthBodyDto getHolidays)
         {
             var url = $"{_getHolidaysForMonthUrl}&month={getHolidays.Month}&year={getHolidays.Year}&country={getHolidays.CountryCode}";
             var getCountry = _dbContext.Countries.Include(c => c.Regions).Where(c => c.CountryCode.Equals(getHolidays.CountryCode)).SingleOrDefault();
@@ -155,7 +155,7 @@ namespace MediaPark.Services.GetData
                 };
             });
         }
-        public async Task<List<SendHolidayDto>> FetchHolidaysForYear(GetHolidaysForYearBodyDto getMaximumNumberOfFreeDaysInYear)
+        public async Task<List<SendHolidayDto>> FetchHolidaysForYear(Dtos.MaximumNumberOfFreeDays.GetHolidaysForYearBodyDto getMaximumNumberOfFreeDaysInYear)
         {
             _apiHelper.InitializeClient();
             var url = ConfigureGetHolidaysForYearUrl(getMaximumNumberOfFreeDaysInYear);
@@ -190,7 +190,7 @@ namespace MediaPark.Services.GetData
             }).ToList();
         }
 
-        private string ConfigureGetHolidaysForYearUrl(GetHolidaysForYearBodyDto getMaximumNumberOfFreeDaysInYear)
+        private string ConfigureGetHolidaysForYearUrl(Dtos.MaximumNumberOfFreeDays.GetHolidaysForYearBodyDto getMaximumNumberOfFreeDaysInYear)
         {
             string url = $"{_getHolidaysForYearUrl}&year={getMaximumNumberOfFreeDaysInYear.Year}&country={getMaximumNumberOfFreeDaysInYear.CountryCode}";
             var getCountry = _dbContext.Countries.Include(c => c.Regions).Where(c => c.CountryCode.Equals(getMaximumNumberOfFreeDaysInYear.CountryCode)).SingleOrDefault();

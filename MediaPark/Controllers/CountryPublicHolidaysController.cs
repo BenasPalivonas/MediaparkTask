@@ -41,7 +41,7 @@ namespace MediaPark.Controllers
             }
         }
         [HttpPost]
-        public async Task<ActionResult<List<ReadHolidaysInGivenCountry>>> GetAllHolidaysForMonth(HolidaysForGivenCountryMonthBodyDto getHolidays)
+        public async Task<ActionResult<List<ReadHolidaysInGivenCountry>>> GetAllHolidaysForMonth(GetHolidaysForMonthBodyDto getHolidays)
         {
             try
             {
@@ -65,7 +65,7 @@ namespace MediaPark.Controllers
             }            
         }
         [HttpPost]
-        public async  Task<ActionResult<List<SendHolidayDto>>> GetMaximumNumberOfFreeDaysInYear(GetHolidaysForYearBodyDto getHolidaysForYear) {
+        public async  Task<ActionResult<List<SendHolidayDto>>> GetMaximumNumberOfFreeDaysInYear(Dtos.MaximumNumberOfFreeDays.GetHolidaysForYearBodyDto getHolidaysForYear) {
             try {
                 var holidays = await _countryPublicHolidaysRepository.GetHolidaysForYear(getHolidaysForYear);
                 return holidays;
