@@ -40,7 +40,7 @@ namespace MediaPark.Repositories
         {
             return await Task.Run(() => _appDbContext.Countries.Select(c => new SendSupportedCountriesDto
             {
-                CountryCode = c.CountryCode,
+                CountryCode = c.CountryCode.ToLower(),
                 Regions = c.Regions.Select(r => r.Name).ToList(),
                 HolidayTypes = c.Country_HolidayTypes.Select(c => c.HolidayType.Name).ToList(),
                 FullName = c.FullName,
@@ -67,33 +67,14 @@ namespace MediaPark.Repositories
                 return await FormatHolidaysForController(databaseHolidays);
             }
             var holidays = await _handleData.FetchHolidaysForMonth(getHolidaysForMonth);
+            if (holidays is null)
+            {
+                return null;
+            }
             var holidaysIEnumerable = await HolidaysDtoToHolidaysIEnumerable(holidays);
-            await SaveDayStatuesFromHolidaysList(holidaysIEnumerable.ToList());
             await _databaseHandler.AddHolidaysToDatabase(holidaysIEnumerable);
             return holidays;
         }
-
-        private async Task SaveDayStatuesFromHolidaysList(List<Holiday> holidays)
-        {
-            int day;
-            int month;
-            int year;
-            foreach (var holiday in holidays)
-            {
-                var date = holiday.Date.Split("-");
-                day = Int32.Parse(date[0]);
-                month = Int32.Parse(date[1]);
-                year = Int32.Parse(date[2]);
-                var dayStatus = new SpecificDayStatusDto()
-                {
-                    DayOfTheMonth = day,
-                    Month = month,
-                    Year = year
-                };
-                await _databaseHandler.AddDayToDatabase(await _handleData.CreateDayEntity(dayStatus, holiday.HolidayType.Name));
-            }
-        }
-
         private static async Task<List<SendHolidayDto>> FormatHolidaysForController(List<Holiday> databaseHolidays)
         {
             return await Task.Run(() =>
@@ -108,28 +89,37 @@ namespace MediaPark.Repositories
                         Text = hn.Text,
                     }).ToList(),
                     HolidayType = h.HolidayType.Name,
-                    CountryCode = h.CountryCode
+                    CountryCode = h.CountryCode.ToLower()
                 }).ToList();
             });
         }
 
         private async Task<IEnumerable<Holiday>> HolidaysDtoToHolidaysIEnumerable(List<SendHolidayDto> holidays)
         {
+
             return await Task.Run(() =>
             {
-                return holidays.Select(h => new Holiday
-                {
-                    Date = h.Date,
-                    DayOfTheWeek = h.DayOfTheWeek,
-                    HolidayName = h.Name.Select(hn => new HolidayName
-                    {
-                        Lang = hn.Lang,
-                        Text = hn.Text
-                    }).ToList(),
-                    HolidayType = _appDbContext.HolidayTypes.SingleOrDefault(ht => ht.Name.Equals(h.HolidayType)),
-                    CountryCode = h.CountryCode,
-                    Country = _appDbContext.Countries.Find(h.CountryCode)
-                });
+                return holidays.Select(h =>
+                 new Holiday
+                 {
+                     Date = h.Date,
+                     DayOfTheWeek = h.DayOfTheWeek,
+                     HolidayName = h.Name.Select(hn => new HolidayName
+                     {
+                         Lang = hn.Lang,
+                         Text = hn.Text
+                     }).ToList(),
+                     HolidayType = _appDbContext.HolidayTypes.SingleOrDefault(ht => ht.Name.Equals(h.HolidayType)),
+                     CountryCode = h.CountryCode.ToLower(),
+                     Country = _appDbContext.Countries.Find(h.CountryCode.ToLower()),
+                     Day = new Day
+                     {
+                         DayOfTheMonth = Int32.Parse(h.Date.Split("-")[0]),
+                         Month = Int32.Parse(h.Date.Split("-")[1]),
+                         Year = Int32.Parse(h.Date.Split("-")[2]),
+                         DayStatus = "Public holiday",
+                     }
+                 });
             });
         }
 
@@ -141,12 +131,18 @@ namespace MediaPark.Repositories
                 return dbAnswer;
             }
             var isPublicHoliday = await _handleData.FetchIsPublicHoliday(getSpecificDayStatus);
+            if (isPublicHoliday is null) {
+                return null;
+            }
             if (isPublicHoliday.IsPublicHoliday == true)
             {
                 await _databaseHandler.AddDayToDatabase(await _handleData.CreateDayEntity(getSpecificDayStatus, _publicHoliday));
                 return new DayStatusAnswerDto { DayStatus = _publicHoliday };
             }
             var isWorkDay = await _handleData.FetchIsWorkDay(getSpecificDayStatus);
+            if (isWorkDay is null) {
+                return null;
+            }
             if (isWorkDay.IsWorkDay == true)
             {
                 await _databaseHandler.AddDayToDatabase(await _handleData.CreateDayEntity(getSpecificDayStatus, _workDay));
@@ -165,10 +161,12 @@ namespace MediaPark.Repositories
                 return dbAnswer;
             }
             var holidaysForController = await _handleData.FetchHolidaysForYear(getHolidaysForYear);
+            if (holidaysForController is null) {
+                return null;
+            }
             var holidays = (await HolidaysDtoToHolidaysIEnumerable(holidaysForController)).ToList();
             var dbHolidays = _appDbContext.Holidays.ToList();
             var distinctHolidaysForDb = GetDistinctHolidays(holidays, dbHolidays);
-            await SaveDayStatuesFromHolidaysList(distinctHolidaysForDb);
             await _databaseHandler.AddHolidaysToDatabase(distinctHolidaysForDb);
             await _databaseHandler.AddFullYearsOfHolidaysToCountry(getHolidaysForYear);
             return holidays.ToList();
@@ -182,7 +180,7 @@ namespace MediaPark.Repositories
             {
                 foreach (var dbHoliday in dbHolidays)
                 {
-                    if (holiday.Date.Equals(dbHoliday.Date) && holiday.CountryCode.Equals(dbHoliday.CountryCode))
+                    if (holiday.Date.Equals(dbHoliday.Date) && holiday.CountryCode.ToLower().Equals(dbHoliday.CountryCode.ToLower()))
                     {
                         contains = true;
                         break;
@@ -220,7 +218,7 @@ namespace MediaPark.Repositories
                         DayOfTheMonth = day,
                         Month = month,
                         Year = year,
-                        CountryCode = holiday.CountryCode
+                        CountryCode = holiday.CountryCode.ToLower()
                     });
                     maxDays++;
                 }

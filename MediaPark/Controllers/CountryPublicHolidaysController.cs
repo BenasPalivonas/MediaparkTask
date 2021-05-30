@@ -29,9 +29,9 @@ namespace MediaPark.Controllers
             try
             {
                 var countries = await _countryPublicHolidaysRepository.GetAllCountries();
-                if (!countries.Any())
+                if (!countries.Any() || countries is null)
                 {
-                    return NotFound(404);
+                    return NotFound();
                 }
                 return Ok(countries);
             }
@@ -46,33 +46,48 @@ namespace MediaPark.Controllers
             try
             {
                 var response = await _countryPublicHolidaysRepository.GetHolidaysForMonthForGivenCountry(getHolidays);
+                if (response is null) {
+                    return NotFound();
+                }
                 return Ok(response);
             }
-            catch (Exception ex)
+            catch
             {
-                throw new Exception(ex.Message);
+                return StatusCode(500);
             }
         }
         [HttpPost]
-        public async Task<ActionResult<DayStatusAnswerDto>> SpecificDayStatus(SpecificDayStatusDto dayStatusDto) {
+        public async Task<ActionResult<DayStatusAnswerDto>> SpecificDayStatus(SpecificDayStatusDto dayStatusDto)
+        {
             try
             {
                 var response = await _countryPublicHolidaysRepository.GetSpecificDayStatus(dayStatusDto);
+                if (response is null)
+                {
+                    return NotFound();
+                }
                 return Ok(response);
             }
-            catch (Exception ex) {
-                throw new Exception(ex.Message);
-            }            
+            catch
+            {
+                return StatusCode(500);
+            }
         }
         [HttpPost]
-        public async  Task<ActionResult<SendMaximumNumberOfFreeDaysDto>> GetMaximumNumberOfFreeDaysInYear(Dtos.MaximumNumberOfFreeDays.GetHolidaysForYearBodyDto getHolidaysForYear) {
-            try {
+        public async Task<ActionResult<SendMaximumNumberOfFreeDaysDto>> GetMaximumNumberOfFreeDaysInYear(GetHolidaysForYearBodyDto getHolidaysForYear)
+        {
+            try
+            {
                 var holidays = await _countryPublicHolidaysRepository.GetHolidaysForYear(getHolidaysForYear);
-
+                if (holidays is null)
+                {
+                    return NotFound();
+                }
                 return await _countryPublicHolidaysRepository.getMaximumNumberOfFreeDaysInHolidayList(holidays);
             }
-            catch (Exception ex) {
-                throw new Exception(ex.Message);
+            catch
+            {
+                return StatusCode(500);
             }
         }
     }

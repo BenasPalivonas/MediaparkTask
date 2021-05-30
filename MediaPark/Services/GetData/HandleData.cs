@@ -37,8 +37,14 @@ namespace MediaPark.Services.GetData
             {
                 if (response.IsSuccessStatusCode)
                 {
+                    try {
                     var countries = await response.Content.ReadAsAsync<List<GetSupportedCountriesDto>>();
-                    return countries;
+                    return countries;  
+                    }
+                    catch
+                    {
+                        return null;
+                    }
                 }
                 else
                 {
@@ -51,7 +57,7 @@ namespace MediaPark.Services.GetData
         {
             return countries.Select(c => new Country
             {
-                CountryCode = c.CountryCode,
+                CountryCode = c.CountryCode.ToLower(),
                 FullName = c.FullName,
                 FromDate = c.FromDate,
                 ToDate = c.ToDate,
@@ -61,7 +67,7 @@ namespace MediaPark.Services.GetData
                 }).ToList(),
                 Country_HolidayTypes = c.HolidayTypes.Select(ht => new Country_HolidayType
                 {
-                    Country = _dbContext.Countries.Where(cdb => cdb.CountryCode == c.CountryCode).FirstOrDefault(),
+                    Country = _dbContext.Countries.Where(cdb => cdb.CountryCode.ToLower() == c.CountryCode.ToLower()).FirstOrDefault(),
                     HolidayType = _dbContext.HolidayTypes.Where(htdb => htdb.Name == ht).FirstOrDefault()
                 }).ToList()
             }).ToList();
@@ -85,9 +91,15 @@ namespace MediaPark.Services.GetData
             {
                 if (response.IsSuccessStatusCode)
                 {
-                    var holidays = await response.Content.ReadAsAsync<List<ReadHolidaysInGivenCountry>>();
-                    holidays.ForEach(c => c.CountryCode = getHolidays.CountryCode);
-                    return FormatHolidaysForSending(holidays);
+                    try
+                    {
+                        var holidays = await response.Content.ReadAsAsync<List<ReadHolidaysInGivenCountry>>();
+                        holidays.ForEach(c => c.CountryCode = getHolidays.CountryCode.ToLower());
+                        return FormatHolidaysForSending(holidays);
+                    }
+                    catch {
+                        return null;
+                    }
                 }
                 else
                 {
@@ -99,7 +111,10 @@ namespace MediaPark.Services.GetData
         private string ConfigureGetHolidaysForMonthUrl(GetHolidaysForMonthBodyDto getHolidays)
         {
             var url = $"{_getHolidaysForMonthUrl}&month={getHolidays.Month}&year={getHolidays.Year}&country={getHolidays.CountryCode}";
-            var getCountry = _dbContext.Countries.Include(c => c.Regions).Where(c => c.CountryCode.Equals(getHolidays.CountryCode)).SingleOrDefault();
+            var getCountry = _dbContext.Countries.Include(c => c.Regions).Where(c => c.CountryCode.ToLower().Equals(getHolidays.CountryCode.ToLower()))?.SingleOrDefault();
+            if (getCountry is null) {
+                return url;
+            }
             foreach (var regionName in getCountry.Regions.Select(r => r.Name))
             {
                 url += $"&region={regionName}";
@@ -114,8 +129,14 @@ namespace MediaPark.Services.GetData
             {
                 if (response.IsSuccessStatusCode)
                 {
-                    var isPublicHoliday = await response.Content.ReadAsAsync<IsPublicHolidayDto>();
-                    return isPublicHoliday;
+                    try
+                    {
+                        var isPublicHoliday = await response.Content.ReadAsAsync<IsPublicHolidayDto>();
+                        return isPublicHoliday;
+                    }
+                    catch{
+                        return null;
+                    }
                 }
                 else
                 {
@@ -131,8 +152,14 @@ namespace MediaPark.Services.GetData
             {
                 if (response.IsSuccessStatusCode)
                 {
-                    var isWorkDay = await response.Content.ReadAsAsync<IsWorkDayDto>();
-                    return isWorkDay;
+                    try
+                    {
+                        var isWorkDay = await response.Content.ReadAsAsync<IsWorkDayDto>();
+                        return isWorkDay;
+                    }
+                    catch {
+                        return null;
+                    }
                 }
                 else
                 {
@@ -153,7 +180,7 @@ namespace MediaPark.Services.GetData
                 };
             });
         }
-        public async Task<List<SendHolidayDto>> FetchHolidaysForYear(Dtos.MaximumNumberOfFreeDays.GetHolidaysForYearBodyDto getMaximumNumberOfFreeDaysInYear)
+        public async Task<List<SendHolidayDto>> FetchHolidaysForYear(GetHolidaysForYearBodyDto getMaximumNumberOfFreeDaysInYear)
         {
             _apiHelper.InitializeClient();
             var url = ConfigureGetHolidaysForYearUrl(getMaximumNumberOfFreeDaysInYear);
@@ -161,9 +188,14 @@ namespace MediaPark.Services.GetData
             {
                 if (response.IsSuccessStatusCode)
                 {
+                    try { 
                     var holidays = await response.Content.ReadAsAsync<List<ReadHolidaysInGivenCountry>>();
-                    holidays.ForEach(c => c.CountryCode = getMaximumNumberOfFreeDaysInYear.CountryCode);
-                    return FormatHolidaysForSending( holidays);
+                    holidays.ForEach(c => c.CountryCode = getMaximumNumberOfFreeDaysInYear.CountryCode.ToLower());
+                    return FormatHolidaysForSending(holidays);
+                    }
+                    catch{
+                        return null;
+                    }
                 }
                 else
                 {
@@ -184,19 +216,22 @@ namespace MediaPark.Services.GetData
                     Text = hn.Text,
                 }).ToList(),
                 HolidayType = h.HolidayType,
-                CountryCode = h.CountryCode
+                CountryCode = h.CountryCode.ToLower()
             }).ToList();
         }
 
-        private string ConfigureGetHolidaysForYearUrl(Dtos.MaximumNumberOfFreeDays.GetHolidaysForYearBodyDto getMaximumNumberOfFreeDaysInYear)
+        private string ConfigureGetHolidaysForYearUrl(GetHolidaysForYearBodyDto getMaximumNumberOfFreeDaysInYear)
         {
             string url = $"{_getHolidaysForYearUrl}&year={getMaximumNumberOfFreeDaysInYear.Year}&country={getMaximumNumberOfFreeDaysInYear.CountryCode}";
-            var getCountry = _dbContext.Countries.Include(c => c.Regions).Where(c => c.CountryCode.Equals(getMaximumNumberOfFreeDaysInYear.CountryCode)).SingleOrDefault();
+            var getCountry = _dbContext.Countries.Include(c => c.Regions).Where(c => c.CountryCode.ToLower().Equals(getMaximumNumberOfFreeDaysInYear.CountryCode.ToLower()))?.SingleOrDefault();
+            if (getCountry is null) {
+                return url;
+            }
             foreach (var regionName in getCountry.Regions.Select(r => r.Name))
             {
                 url += $"&region={regionName}";
             }
-            url +="&holidayType=all";
+            url += "&holidayType=all";
             return url;
         }
 

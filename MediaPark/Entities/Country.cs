@@ -10,6 +10,7 @@ namespace MediaPark.Entities
     public class Country
     {
         [Key]
+        [MaxLength(3)]
         public string CountryCode { get; set; }
         public List<Region> Regions { get; set; }
         public List<Country_HolidayType> Country_HolidayTypes { get; set; }
@@ -18,6 +19,6 @@ namespace MediaPark.Entities
         public FromDate FromDate { get; set; }
         public ToDate ToDate { get; set; }
         public List<Holiday> Holiday { get; set; }
-        public List<FullYearOfHolidays> FullYearOfHolidays{ get; set; }
+        public List<FullYearOfHolidays> FullYearOfHolidays { get; set; }
     }
 }

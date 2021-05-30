@@ -8,6 +8,7 @@ namespace MediaPark.Dtos.Holidays
 {
     public class GetHolidaysForMonthBodyDto
     {
+        [MaxLength(3)]
         public string CountryCode { get; set; }
         [Range(1, 12)]
         public int Month { get; set; }

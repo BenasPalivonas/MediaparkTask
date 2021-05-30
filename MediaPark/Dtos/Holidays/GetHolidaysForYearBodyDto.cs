@@ -8,8 +8,9 @@ namespace MediaPark.Dtos.MaximumNumberOfFreeDays
 {
     public class GetHolidaysForYearBodyDto
     {
+        [MaxLength(3)]
         public string CountryCode { get; set; }
-        [Range(0,int.MaxValue)]
+        [Range(0, int.MaxValue)]
         public int Year { get; set; }
     }
 }

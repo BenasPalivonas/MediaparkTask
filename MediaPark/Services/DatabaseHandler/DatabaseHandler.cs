@@ -39,9 +39,11 @@ namespace MediaPark.Services.DatabaseHandler
                 await ClearDatabase();
             }
             var countries = await _getData.FetchSupportedCountries();
+            if (countries is not null) {
             await AddPublicHolidays(await _getData.GetHolidayTypes(countries));
             await _appDbContext.AddRangeAsync(_getData.GetCountryEntities(countries));
-            await _appDbContext.SaveChangesAsync();
+            await _appDbContext.SaveChangesAsync(); 
+            }
         }
         public async Task ClearDatabase()
         {
@@ -56,7 +58,8 @@ namespace MediaPark.Services.DatabaseHandler
             }
             await _appDbContext.Database.ExecuteSqlRawAsync("EXEC sp_MSforeachtable @command1 = 'ALTER TABLE ? CHECK CONSTRAINT all'");
         }
-        public async Task AddHolidaysToDatabase(IEnumerable<Holiday> holidays) {
+        public async Task AddHolidaysToDatabase(IEnumerable<Holiday> holidays)
+        {
             await _appDbContext.Holidays.AddRangeAsync(holidays);
             await _appDbContext.SaveChangesAsync();
         }
@@ -65,25 +68,28 @@ namespace MediaPark.Services.DatabaseHandler
             await _appDbContext.Days.AddAsync(day);
             await _appDbContext.SaveChangesAsync();
         }
-        public async Task<List<Holiday>> GetMonthsHolidaysFromDb(GetHolidaysForMonthBodyDto getHolidays) {
+        public async Task<List<Holiday>> GetMonthsHolidaysFromDb(GetHolidaysForMonthBodyDto getHolidays)
+        {
             var holidays = await Task.Run(() =>
             {
                 return _appDbContext.Holidays.Include(h => h.HolidayType).Include(h => h.HolidayName)
                 .Where(h => h.CountryCode == getHolidays.CountryCode)
-                .Where(h => h.Date.EndsWith ($"{getHolidays.Month}-{getHolidays.Year}"))?.ToList();
+                .Where(h => h.Date.EndsWith($"{getHolidays.Month}-{getHolidays.Year}"))?.ToList();
             });
-                if (!holidays.Any()) {
+            if (!holidays.Any())
+            {
                 return null;
-                }
+            }
             return holidays;
         }
-        public async Task<DayStatusAnswerDto> ReturnDayStatusFromDb(SpecificDayStatusDto specificDay) {
+        public async Task<DayStatusAnswerDto> ReturnDayStatusFromDb(SpecificDayStatusDto specificDay)
+        {
             string dayStatus = await Task.Run(() =>
             {
-               return _appDbContext.Days.Where(d=>d.Year==specificDay.Year
-               &&d.Month==specificDay.Month
-               &&d.DayOfTheMonth==specificDay.DayOfTheMonth).SingleOrDefault()?.DayStatus;
-                
+                return _appDbContext.Days.Where(d => d.Year == specificDay.Year
+                && d.Month == specificDay.Month
+                && d.DayOfTheMonth == specificDay.DayOfTheMonth).SingleOrDefault()?.DayStatus;
+
             });
             if (dayStatus is not null)
             {
@@ -91,7 +97,8 @@ namespace MediaPark.Services.DatabaseHandler
             }
             return null;
         }
-        public async Task AddFullYearsOfHolidaysToCountry(GetHolidaysForYearBodyDto getHolidays) {
+        public async Task AddFullYearsOfHolidaysToCountry(GetHolidaysForYearBodyDto getHolidays)
+        {
             var fullYearOfHolidays = new FullYearOfHolidays
             {
                 Year = getHolidays.Year,

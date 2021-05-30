@@ -1,9 +1,5 @@
 ﻿using MediaPark.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MediaPark.Database
 {
@@ -11,7 +7,6 @@ namespace MediaPark.Database
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
-            this.ChangeTracker.LazyLoadingEnabled = false;
         }
         public DbSet<Country> Countries { get; set; }
         public DbSet<FromDate> FromDates { get; set; }
@@ -40,10 +35,10 @@ namespace MediaPark.Database
               .WithOne(a => a.Country)
               .HasForeignKey<ToDate>(a => a.CountryCode);
 
-           modelBuilder.Entity<Country>()
-                .HasMany(a => a.Holiday)
-                .WithOne(a => a.Country)
-                .HasForeignKey(a => a.CountryCode); 
+            modelBuilder.Entity<Country>()
+                 .HasMany(a => a.Holiday)
+                 .WithOne(a => a.Country)
+                 .HasForeignKey(a => a.CountryCode);
 
             modelBuilder.Entity<Country_HolidayType>()
                 .HasOne(c => c.Country)
@@ -64,6 +59,10 @@ namespace MediaPark.Database
                 .HasMany(a => a.FullYearOfHolidays)
                 .WithOne(fyh => fyh.Country)
                 .HasForeignKey(fyh => fyh.CountryCode);
+            modelBuilder.Entity<Holiday>()
+                .HasOne(h => h.Day)
+                .WithOne(h => h.Holiday)
+                .HasForeignKey<Holiday>(h => h.DayId);
         }
     }
 }

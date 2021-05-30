@@ -1,13 +1,11 @@
 ﻿using MediaPark.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace MediaPark.Dtos
 {
     public class GetSupportedCountriesDto
     {
+        [MaxLength(3)]
         public string CountryCode { get; set; }
         public string[] Regions { get; set; }
         public string[] HolidayTypes { get; set; }
