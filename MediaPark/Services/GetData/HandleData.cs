@@ -115,7 +115,6 @@ namespace MediaPark.Services.GetData
                 if (response.IsSuccessStatusCode)
                 {
                     var isPublicHoliday = await response.Content.ReadAsAsync<IsPublicHolidayDto>();
-                    Debug.WriteLine(isPublicHoliday.IsPublicHoliday);
                     return isPublicHoliday;
                 }
                 else
@@ -133,7 +132,6 @@ namespace MediaPark.Services.GetData
                 if (response.IsSuccessStatusCode)
                 {
                     var isWorkDay = await response.Content.ReadAsAsync<IsWorkDayDto>();
-                    Debug.WriteLine(isWorkDay);
                     return isWorkDay;
                 }
                 else

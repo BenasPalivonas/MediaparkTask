@@ -67,8 +67,31 @@ namespace MediaPark.Repositories
                 return await FormatHolidaysForController(databaseHolidays);
             }
             var holidays = await _handleData.FetchHolidaysForMonth(getHolidaysForMonth);
-            await _databaseHandler.AddHolidaysToDatabase(await HolidaysDtoToHolidaysIEnumerable(holidays));
+            var holidaysIEnumerable = await HolidaysDtoToHolidaysIEnumerable(holidays);
+            await SaveDayStatuesFromHolidaysList(holidaysIEnumerable.ToList());
+            await _databaseHandler.AddHolidaysToDatabase(holidaysIEnumerable);
             return holidays;
+        }
+
+        private async Task SaveDayStatuesFromHolidaysList(List<Holiday> holidays)
+        {
+            int day;
+            int month;
+            int year;
+            foreach (var holiday in holidays)
+            {
+                var date = holiday.Date.Split("-");
+                day = Int32.Parse(date[0]);
+                month = Int32.Parse(date[1]);
+                year = Int32.Parse(date[2]);
+                var dayStatus = new SpecificDayStatusDto()
+                {
+                    DayOfTheMonth = day,
+                    Month = month,
+                    Year = year
+                };
+                await _databaseHandler.AddDayToDatabase(await _handleData.CreateDayEntity(dayStatus, holiday.HolidayType.Name));
+            }
         }
 
         private static async Task<List<SendHolidayDto>> FormatHolidaysForController(List<Holiday> databaseHolidays)
@@ -97,6 +120,7 @@ namespace MediaPark.Repositories
                 return holidays.Select(h => new Holiday
                 {
                     Date = h.Date,
+                    DayOfTheWeek = h.DayOfTheWeek,
                     HolidayName = h.Name.Select(hn => new HolidayName
                     {
                         Lang = hn.Lang,
@@ -133,20 +157,21 @@ namespace MediaPark.Repositories
             await _databaseHandler.AddDayToDatabase(await _handleData.CreateDayEntity(getSpecificDayStatus, _freeDay));
             return new DayStatusAnswerDto { DayStatus = _freeDay };
         }
-        public async Task<List<SendHolidayDto>> GetHolidaysForYear(GetHolidaysForYearBodyDto getHolidaysForYear)
+        public async Task<List<Holiday>> GetHolidaysForYear(GetHolidaysForYearBodyDto getHolidaysForYear)
         {
             var dbAnswer = await _databaseHandler.GetYearsHolidaysFromDb(getHolidaysForYear);
             if (dbAnswer is not null)
             {
-                return await FormatHolidaysForController(dbAnswer);
+                return dbAnswer;
             }
             var holidaysForController = await _handleData.FetchHolidaysForYear(getHolidaysForYear);
             var holidays = (await HolidaysDtoToHolidaysIEnumerable(holidaysForController)).ToList();
             var dbHolidays = _appDbContext.Holidays.ToList();
             var distinctHolidaysForDb = GetDistinctHolidays(holidays, dbHolidays);
+            await SaveDayStatuesFromHolidaysList(distinctHolidaysForDb);
             await _databaseHandler.AddHolidaysToDatabase(distinctHolidaysForDb);
             await _databaseHandler.AddFullYearsOfHolidaysToCountry(getHolidaysForYear);
-            return holidaysForController;
+            return holidays.ToList();
         }
 
         private static List<Holiday> GetDistinctHolidays(List<Holiday> holidays, List<Holiday> dbHolidays)
@@ -170,8 +195,44 @@ namespace MediaPark.Repositories
             }
             return distinctHolidaysForDb;
         }
-        public async Task<SendMaximumNumberOfFreeDaysDto> getMaximumNumberOfFreeDaysInHolidayList(List<Holiday> holidays) {
-        
+        public async Task<SendMaximumNumberOfFreeDaysDto> getMaximumNumberOfFreeDaysInHolidayList(List<Holiday> holidays)
+        {
+            string[] date;
+            int maxFreeDays = 2;
+            int maxDays;
+            var dayStatus = new DayStatusAnswerDto();
+            int day;
+            int month;
+            int year;
+            foreach (var holiday in holidays)
+            {
+                dayStatus.DayStatus = "Public holiday";
+                maxDays = 0;
+                date = holiday.Date.Split("-");
+                day = Int32.Parse(date[0]);
+                month = Int32.Parse(date[1]);
+                year = Int32.Parse(date[2]);
+                while (dayStatus.DayStatus != "Work day")
+                {
+                    day++;
+                    dayStatus = await GetSpecificDayStatus(new SpecificDayStatusDto()
+                    {
+                        DayOfTheMonth = day,
+                        Month = month,
+                        Year = year,
+                        CountryCode = holiday.CountryCode
+                    });
+                    maxDays++;
+                }
+                if (maxDays >= maxFreeDays)
+                {
+                    maxFreeDays = maxDays;
+                }
+            }
+            return new SendMaximumNumberOfFreeDaysDto()
+            {
+                FreeDays = maxFreeDays
+            };
         }
 
     }

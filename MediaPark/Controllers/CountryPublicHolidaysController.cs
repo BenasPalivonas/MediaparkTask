@@ -65,10 +65,11 @@ namespace MediaPark.Controllers
             }            
         }
         [HttpPost]
-        public async  Task<ActionResult<List<SendHolidayDto>>> GetMaximumNumberOfFreeDaysInYear(Dtos.MaximumNumberOfFreeDays.GetHolidaysForYearBodyDto getHolidaysForYear) {
+        public async  Task<ActionResult<SendMaximumNumberOfFreeDaysDto>> GetMaximumNumberOfFreeDaysInYear(Dtos.MaximumNumberOfFreeDays.GetHolidaysForYearBodyDto getHolidaysForYear) {
             try {
                 var holidays = await _countryPublicHolidaysRepository.GetHolidaysForYear(getHolidaysForYear);
-                return holidays;
+
+                return await _countryPublicHolidaysRepository.getMaximumNumberOfFreeDaysInHolidayList(holidays);
             }
             catch (Exception ex) {
                 throw new Exception(ex.Message);

@@ -7,7 +7,6 @@ namespace MediaPark.Dtos.MaximumNumberOfFreeDays
 {
     public class SendMaximumNumberOfFreeDaysDto
     {
-        public int MaximumNumberOfFreeDaysInARow { get; set; }
-        public string DateInterval { get; set; }
+        public int FreeDays { get; set; }
     }
 }
