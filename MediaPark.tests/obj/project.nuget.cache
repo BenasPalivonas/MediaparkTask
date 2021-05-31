@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Zlvml/ZOfO0l9FfQ6cc+bH708K9PlLAyqYBkDW0GomU0sr8WFEsGq1HX9zEtL5rB35abZq6XdZU03IXbU2JgbA==",
+  "dgSpecHash": "OfW7/uz4VtqVFC2LJaBWyTQG9m1H7gBNPjZtJZhPP4WKbVNioLF+Ak3c8pGZyQASm9ovETlejVJ7cEn4J+97oQ==",
   "success": true,
-  "projectFilePath": "D:\\MediaPark\\MediaPark\\MediaPark.tests\\MediaPark.tests.csproj",
+  "projectFilePath": "D:\\MEDIAPRANK\\MediaparkTask\\MediaPark.tests\\MediaPark.tests.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\User\\.nuget\\packages\\castle.core\\4.4.0\\castle.core.4.4.0.nupkg.sha512",
     "C:\\Users\\User\\.nuget\\packages\\coverlet.collector\\1.3.0\\coverlet.collector.1.3.0.nupkg.sha512",

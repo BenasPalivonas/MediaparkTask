@@ -8436,11 +8436,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\MediaPark\\MediaPark\\MediaPark.tests\\MediaPark.tests.csproj",
+      "projectUniqueName": "D:\\MEDIAPRANK\\MediaparkTask\\MediaPark.tests\\MediaPark.tests.csproj",
       "projectName": "MediaPark.tests",
-      "projectPath": "D:\\MediaPark\\MediaPark\\MediaPark.tests\\MediaPark.tests.csproj",
+      "projectPath": "D:\\MEDIAPRANK\\MediaparkTask\\MediaPark.tests\\MediaPark.tests.csproj",
       "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-      "outputPath": "D:\\MediaPark\\MediaPark\\MediaPark.tests\\obj\\",
+      "outputPath": "D:\\MEDIAPRANK\\MediaparkTask\\MediaPark.tests\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -8457,8 +8457,8 @@
         "net5.0": {
           "targetAlias": "net5.0",
           "projectReferences": {
-            "D:\\MediaPark\\MediaPark\\MediaPark\\MediaPark.csproj": {
-              "projectPath": "D:\\MediaPark\\MediaPark\\MediaPark\\MediaPark.csproj"
+            "D:\\MEDIAPRANK\\MediaparkTask\\MediaPark\\MediaPark.csproj": {
+              "projectPath": "D:\\MEDIAPRANK\\MediaparkTask\\MediaPark\\MediaPark.csproj"
             }
           }
         }
