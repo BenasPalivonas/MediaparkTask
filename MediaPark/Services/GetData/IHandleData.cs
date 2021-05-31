@@ -15,7 +15,7 @@ namespace MediaPark.Services.GetData
     {
         public Task<List<GetSupportedCountriesDto>> FetchSupportedCountries();
         public List<Country> GetCountryEntities(List<GetSupportedCountriesDto> countries);
-        public Task<IEnumerable<HolidayType>> GetHolidayTypes(List<GetSupportedCountriesDto> countries);
+        public Task<List<HolidayType>> GetHolidayTypes(List<GetSupportedCountriesDto> countries);
         public Task<List<SendHolidayDto>> FetchHolidaysForMonth(GetHolidaysForMonthBodyDto getHolidays);
         public Task<IsPublicHolidayDto> FetchIsPublicHoliday(SpecificDayStatusDto getDayStatus);
         public Task<IsWorkDayDto> FetchIsWorkDay(SpecificDayStatusDto getDayStatus);

@@ -83,7 +83,7 @@ namespace MediaPark.Controllers
                 {
                     return NotFound();
                 }
-                return await _countryPublicHolidaysRepository.getMaximumNumberOfFreeDaysInHolidayList(holidays);
+                return await _countryPublicHolidaysRepository.GetMaximumNumberOfFreeDaysInHolidayList(holidays);
             }
             catch
             {

@@ -19,8 +19,8 @@ namespace MediaPark.Services.GetData
     {
         private const string _supportedCountriesUrl = "json/v2.0/?action=getSupportedCountries";
         private readonly string _getHolidaysForMonthUrl = "json/v2.0?action=getHolidaysForMonth";
-        private readonly string _IsPublicHolidayUrl = "json/v2.0?action=isPublicHoliday";
-        private readonly string _IsWorkDayUrl = "json/v2.0?action=isWorkDay";
+        private readonly string _isPublicHolidayUrl = "json/v2.0?action=isPublicHoliday";
+        private readonly string _isWorkDayUrl = "json/v2.0?action=isWorkDay";
         private readonly string _getHolidaysForYearUrl = "json/v2.0?action=getHolidaysForYear";
         private readonly IApiHelper _apiHelper;
         private readonly AppDbContext _dbContext;
@@ -73,14 +73,14 @@ namespace MediaPark.Services.GetData
             }).ToList();
         }
 
-        public async Task<IEnumerable<HolidayType>> GetHolidayTypes(List<GetSupportedCountriesDto> countries)
+        public async Task<List<HolidayType>> GetHolidayTypes(List<GetSupportedCountriesDto> countries)
         {
             string[] holidayTypes = new string[] { };
             foreach (var holidayType in countries.Select(c => c.HolidayTypes))
             {
                 holidayTypes = holidayTypes.Union(holidayType).ToArray();
             }
-            return await Task.Run(() => holidayTypes.Select(ht => new HolidayType { Name = ht }));
+            return await Task.Run(() => holidayTypes.Select(ht => new HolidayType { Name = ht }).ToList());
         }
 
         public async Task<List<SendHolidayDto>> FetchHolidaysForMonth(GetHolidaysForMonthBodyDto getHolidays)
@@ -124,7 +124,7 @@ namespace MediaPark.Services.GetData
         public async Task<IsPublicHolidayDto> FetchIsPublicHoliday(SpecificDayStatusDto getDayStatus)
         {
             _apiHelper.InitializeClient();
-            var url = $"{_IsPublicHolidayUrl}&date={getDayStatus.DayOfTheMonth}-{getDayStatus.Month}-{getDayStatus.Year}&country={getDayStatus.CountryCode}";
+            var url = $"{_isPublicHolidayUrl}&date={getDayStatus.DayOfTheMonth}-{getDayStatus.Month}-{getDayStatus.Year}&country={getDayStatus.CountryCode}";
             using (HttpResponseMessage response = await _apiHelper.ApiClient.GetAsync(url))
             {
                 if (response.IsSuccessStatusCode)
@@ -147,7 +147,7 @@ namespace MediaPark.Services.GetData
         public async Task<IsWorkDayDto> FetchIsWorkDay(SpecificDayStatusDto getDayStatus)
         {
             _apiHelper.InitializeClient();
-            var url = $"{_IsWorkDayUrl}&date={getDayStatus.DayOfTheMonth}-{getDayStatus.Month}-{getDayStatus.Year}&country={getDayStatus.CountryCode}";
+            var url = $"{_isWorkDayUrl}&date={getDayStatus.DayOfTheMonth}-{getDayStatus.Month}-{getDayStatus.Year}&country={getDayStatus.CountryCode}";
             using (HttpResponseMessage response = await _apiHelper.ApiClient.GetAsync(url))
             {
                 if (response.IsSuccessStatusCode)

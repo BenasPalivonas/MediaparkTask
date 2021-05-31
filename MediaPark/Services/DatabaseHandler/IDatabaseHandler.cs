@@ -12,7 +12,7 @@ namespace MediaPark.Services.DatabaseHandler
 {
     public interface IDatabaseHandler
     {
-        public Task ClearAndUpdateDatabaseWithCountries();
+        public Task PopulateDb();
         public Task ClearDatabase();
         public Task AddPublicHolidays(IEnumerable<HolidayType> holidayTypes);
         public Task<List<Holiday>> GetMonthsHolidaysFromDb(GetHolidaysForMonthBodyDto getHolidays);

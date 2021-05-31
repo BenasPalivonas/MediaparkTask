@@ -1,0 +1,581 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Swagger API",
+    "version": "v1"
+  },
+  "paths": {
+    "/api/CountryPublicHolidays/GetAllCountries": {
+      "get": {
+        "tags": [
+          "CountryPublicHolidays"
+        ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Country"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/CountryPublicHolidays/GetAllHolidaysForMonth": {
+      "post": {
+        "tags": [
+          "CountryPublicHolidays"
+        ],
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/GetHolidaysForMonthBodyDto"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ReadHolidaysInGivenCountry"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/CountryPublicHolidays/SpecificDayStatus": {
+      "post": {
+        "tags": [
+          "CountryPublicHolidays"
+        ],
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/SpecificDayStatusDto"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/DayStatusAnswerDto"
+            }
+          }
+        }
+      }
+    },
+    "/api/CountryPublicHolidays/GetMaximumNumberOfFreeDaysInYear": {
+      "post": {
+        "tags": [
+          "CountryPublicHolidays"
+        ],
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/GetHolidaysForYearBodyDto"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/SendMaximumNumberOfFreeDaysDto"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Country": {
+      "required": [
+        "fullName"
+      ],
+      "type": "object",
+      "properties": {
+        "countryCode": {
+          "maxLength": 3,
+          "type": "string"
+        },
+        "regions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Region"
+          }
+        },
+        "country_HolidayTypes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Country_HolidayType"
+          }
+        },
+        "fullName": {
+          "type": "string"
+        },
+        "fromDate": {
+          "$ref": "#/definitions/FromDate"
+        },
+        "toDate": {
+          "$ref": "#/definitions/ToDate"
+        },
+        "holiday": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Holiday"
+          }
+        },
+        "fullYearOfHolidays": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FullYearOfHolidays"
+          }
+        }
+      }
+    },
+    "Country_HolidayType": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "countryCode": {
+          "maxLength": 3,
+          "type": "string"
+        },
+        "country": {
+          "$ref": "#/definitions/Country"
+        },
+        "holidayTypeId": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "holidayType": {
+          "$ref": "#/definitions/HolidayType"
+        }
+      }
+    },
+    "Day": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "dayOfTheMonth": {
+          "format": "int32",
+          "maximum": 31,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "month": {
+          "format": "int32",
+          "maximum": 12,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "year": {
+          "format": "int32",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "dayStatus": {
+          "type": "string"
+        },
+        "holiday": {
+          "$ref": "#/definitions/Holiday"
+        }
+      }
+    },
+    "DayStatusAnswerDto": {
+      "type": "object",
+      "properties": {
+        "dayStatus": {
+          "type": "string"
+        }
+      }
+    },
+    "FromDate": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "day": {
+          "format": "int32",
+          "maximum": 31,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "month": {
+          "format": "int32",
+          "maximum": 12,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "year": {
+          "format": "int32",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "country": {
+          "$ref": "#/definitions/Country"
+        },
+        "countryCode": {
+          "maxLength": 3,
+          "type": "string"
+        }
+      }
+    },
+    "FullYearOfHolidays": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "year": {
+          "format": "int32",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "countryCode": {
+          "maxLength": 3,
+          "type": "string"
+        },
+        "country": {
+          "$ref": "#/definitions/Country"
+        }
+      }
+    },
+    "GetHolidaysForYearBodyDto": {
+      "type": "object",
+      "properties": {
+        "countryCode": {
+          "maxLength": 3,
+          "type": "string"
+        },
+        "year": {
+          "format": "int32",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "type": "integer"
+        }
+      }
+    },
+    "GetHolidaysForMonthBodyDto": {
+      "type": "object",
+      "properties": {
+        "countryCode": {
+          "maxLength": 3,
+          "type": "string"
+        },
+        "month": {
+          "format": "int32",
+          "maximum": 12,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "year": {
+          "format": "int32",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "type": "integer"
+        }
+      }
+    },
+    "Holiday": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "date": {
+          "type": "string"
+        },
+        "dayOfTheWeek": {
+          "format": "int32",
+          "maximum": 7,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "holidayName": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/HolidayName"
+          }
+        },
+        "holidayTypeId": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "holidayType": {
+          "$ref": "#/definitions/HolidayType"
+        },
+        "countryCode": {
+          "maxLength": 3,
+          "type": "string"
+        },
+        "country": {
+          "$ref": "#/definitions/Country"
+        },
+        "dayId": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "day": {
+          "$ref": "#/definitions/Day"
+        }
+      }
+    },
+    "HolidayDateDto": {
+      "type": "object",
+      "properties": {
+        "day": {
+          "format": "int32",
+          "maximum": 7,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "month": {
+          "format": "int32",
+          "maximum": 31,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "year": {
+          "format": "int32",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "dayOfWeek": {
+          "format": "int32",
+          "maximum": 7,
+          "minimum": 1,
+          "type": "integer"
+        }
+      }
+    },
+    "HolidayName": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "lang": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "holidayId": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "holiday": {
+          "$ref": "#/definitions/Holiday"
+        }
+      }
+    },
+    "HolidayNameDto": {
+      "type": "object",
+      "properties": {
+        "lang": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        }
+      }
+    },
+    "HolidayType": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "country_HolidayTypes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Country_HolidayType"
+          }
+        },
+        "holiday": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Holiday"
+          }
+        }
+      }
+    },
+    "ReadHolidaysInGivenCountry": {
+      "type": "object",
+      "properties": {
+        "date": {
+          "$ref": "#/definitions/HolidayDateDto"
+        },
+        "name": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/HolidayNameDto"
+          }
+        },
+        "holidayType": {
+          "type": "string"
+        },
+        "countryCode": {
+          "maxLength": 3,
+          "type": "string"
+        }
+      }
+    },
+    "Region": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "countryCode": {
+          "maxLength": 3,
+          "type": "string"
+        },
+        "country": {
+          "$ref": "#/definitions/Country"
+        }
+      }
+    },
+    "SendMaximumNumberOfFreeDaysDto": {
+      "type": "object",
+      "properties": {
+        "freeDays": {
+          "format": "int32",
+          "type": "integer"
+        }
+      }
+    },
+    "SpecificDayStatusDto": {
+      "type": "object",
+      "properties": {
+        "year": {
+          "format": "int32",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "month": {
+          "format": "int32",
+          "maximum": 12,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "dayOfTheMonth": {
+          "format": "int32",
+          "maximum": 31,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "countryCode": {
+          "maxLength": 3,
+          "type": "string"
+        }
+      }
+    },
+    "ToDate": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "day": {
+          "format": "int32",
+          "maximum": 31,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "month": {
+          "format": "int32",
+          "maximum": 12,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "year": {
+          "format": "int32",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "country": {
+          "$ref": "#/definitions/Country"
+        },
+        "countryCode": {
+          "maxLength": 3,
+          "type": "string"
+        }
+      }
+    }
+  }
+}

@@ -16,6 +16,6 @@ namespace MediaPark.Repositories
         public Task<List<SendHolidayDto>> GetHolidaysForMonthForGivenCountry(GetHolidaysForMonthBodyDto getHolidaysForMonth);
         public Task<DayStatusAnswerDto> GetSpecificDayStatus(SpecificDayStatusDto getSpecificDayStatus);
         public Task<List<Holiday>> GetHolidaysForYear(GetHolidaysForYearBodyDto getHolidaysForYear);
-        public Task<SendMaximumNumberOfFreeDaysDto> getMaximumNumberOfFreeDaysInHolidayList(List<Holiday> holidays);
+        public Task<SendMaximumNumberOfFreeDaysDto> GetMaximumNumberOfFreeDaysInHolidayList(List<Holiday> holidays);
     }
 }

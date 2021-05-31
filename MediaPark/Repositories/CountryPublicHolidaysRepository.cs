@@ -193,7 +193,7 @@ namespace MediaPark.Repositories
             }
             return distinctHolidaysForDb;
         }
-        public async Task<SendMaximumNumberOfFreeDaysDto> getMaximumNumberOfFreeDaysInHolidayList(List<Holiday> holidays)
+        public async Task<SendMaximumNumberOfFreeDaysDto> GetMaximumNumberOfFreeDaysInHolidayList(List<Holiday> holidays)
         {
             string[] date;
             int maxFreeDays = 2;

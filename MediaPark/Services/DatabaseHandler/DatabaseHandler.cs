@@ -32,11 +32,11 @@ namespace MediaPark.Services.DatabaseHandler
             await _appDbContext.SaveChangesAsync();
         }
 
-        public async Task ClearAndUpdateDatabaseWithCountries()
+        public async Task PopulateDb()
         {
             if (_appDbContext.Countries.Any())
             {
-                await ClearDatabase();
+                return;
             }
             var countries = await _getData.FetchSupportedCountries();
             if (countries is not null) {
